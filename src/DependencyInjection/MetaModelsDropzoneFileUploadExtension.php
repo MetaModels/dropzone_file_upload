@@ -31,7 +31,7 @@ use Symfony\Component\DependencyInjection\Loader;
 /**
  * This is the class that loads and manages the bundle configuration
  */
-class MetaModelsDropzoneFileUploadBundleExtension extends Extension
+class MetaModelsDropzoneFileUploadExtension extends Extension
 {
     /**
      * {@inheritDoc}
@@ -42,8 +42,9 @@ class MetaModelsDropzoneFileUploadBundleExtension extends Extension
     {
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 
-        if (\in_array(MetaModelsContaoFrontendEditingBundle::class , $container->getParameter('kernel.packages'))){
-            // Todo add services
+        // Load configuration for the frontend editing.
+        if (\in_array(MetaModelsContaoFrontendEditingBundle::class, $container->getParameter('kernel.bundles'), true)) {
+            $loader->load('frontend_editing/event_listener.yml');
         }
     }
 }
