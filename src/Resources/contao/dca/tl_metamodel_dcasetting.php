@@ -25,22 +25,38 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_single_upload']['upload_settings'][]           =
         'fe_widget_file_dropzone';
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_single_upload']['upload_settings'][]           =
+        'fe_widget_file_dropzone_limit';
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_single_upload']['upload_settings'][]           =
         'fe_widget_file_dropzone_label';
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_single_upload']['upload_settings'][]           =
+        'fe_widget_file_dropzone_description';
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_single_upload_preview']['upload_settings'][]   =
         'fe_widget_file_dropzone';
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_single_upload_preview']['upload_settings'][]   =
+        'fe_widget_file_dropzone_limit';
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_single_upload_preview']['upload_settings'][]   =
         'fe_widget_file_dropzone_label';
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_single_upload_preview']['upload_settings'][]   =
+        'fe_widget_file_dropzone_description';
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_multiple_upload']['upload_settings'][]         =
         'fe_widget_file_dropzone';
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_multiple_upload']['upload_settings'][]         =
+        'fe_widget_file_dropzone_limit';
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_multiple_upload']['upload_settings'][]         =
         'fe_widget_file_dropzone_label';
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_multiple_upload']['upload_settings'][]         =
+        'fe_widget_file_dropzone_description';
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_multiple_upload_preview']['upload_settings'][] =
         'fe_widget_file_dropzone';
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_multiple_upload_preview']['upload_settings'][] =
+        'fe_widget_file_dropzone_limit';
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_multiple_upload_preview']['upload_settings'][] =
         'fe_widget_file_dropzone_label';
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_multiple_upload_preview']['upload_settings'][] =
+        'fe_widget_file_dropzone_description';
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone'] = [
         'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone'],
@@ -52,12 +68,33 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
         'sql'       => "char(1) NOT NULL default ''",
     ];
 
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_limit'] = [
+        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_limit'],
+        'inputType' => 'text',
+        'eval'      => [
+            'maxlength'     => 6,
+            'tl_class'      => 'w50'
+        ],
+        'sql'       => "varchar(6) NOT NULL default ''"
+    ];
+
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_label'] = [
         'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'],
         'inputType' => 'text',
         'eval'      => [
+            'maxlength'     => 255,
             'tl_class'      => 'w50'
         ],
-        'sql'       => "longtext"
+        'sql'       => "varchar(255) NOT NULL default ''"
+    ];
+
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_description'] = [
+        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_description'],
+        'inputType' => 'text',
+        'eval'      => [
+            'maxlength'     => 255,
+            'tl_class'      => 'w50'
+        ],
+        'sql'       => "varchar(255) NOT NULL default ''"
     ];
 }

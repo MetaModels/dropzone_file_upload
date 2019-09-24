@@ -50,10 +50,11 @@ final class BuildDropzoneUploadListener
     /**
      * The constructor.
      *
-     * @param ViewCombination  $viewCombination  The view combination.
+     * @param ViewCombination $viewCombination The view combination.
      */
-    public function __construct(ViewCombination $viewCombination) {
-        $this->viewCombination  = $viewCombination;
+    public function __construct(ViewCombination $viewCombination)
+    {
+        $this->viewCombination = $viewCombination;
     }
 
     /**
@@ -85,8 +86,10 @@ final class BuildDropzoneUploadListener
             $event->getContainer()->getPropertiesDefinition()->getProperty($event->getAttribute()->getColName());
 
         $extra = [
-            'dropzoneUpload' => true,
-            'dropzoneLabel'  => $this->information['fe_widget_file_dropzone_label'] ?: null,
+            'dropzoneUpload'      => true,
+            'dropzoneLabel'       => $this->information['fe_widget_file_dropzone_label'] ?: null,
+            'dropzoneDescription' => $this->information['fe_widget_file_dropzone_description'] ?: null,
+            'uploadLimit'         => $this->information['fe_widget_file_dropzone_limit'] ?: null,
         ];
 
         $property->setExtra(\array_merge($property->getExtra(), $extra));

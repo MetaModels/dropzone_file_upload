@@ -17,9 +17,15 @@
  * @filesource
  */
 
-$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone'][0]                  = 'Dropzone';
-$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone'][1]                  =
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone'][0]             = 'Dropzone';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone'][1]             =
     'If this option dropzone is active, then that widget has a draggable dropzone field.';
-$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'][0]            = 'Dropzone label';
-$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'][1]            =
-    'Here you can enter the label text for the dropzone field.';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'][0]       = 'Dropzone label';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'][1]       =
+    'Here you can enter the label text for the dropzone field. This label display in the dropzone field.';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_limit'][0]       = 'Dropzone limit';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_limit'][1]       =
+    'Here can set the limit of uploads with the dropzone. If not defined, so can unlimited uploads.';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_description'][0] = 'Dropzone description';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_description'][1] =
+    'Here can you enter the dropzone description. This append the description for the field.';
