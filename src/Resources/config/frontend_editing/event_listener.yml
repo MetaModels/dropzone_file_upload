@@ -11,3 +11,19 @@ services:
             -   name: kernel.event_listener
                 event: metamodels.dc-general.events.metamodel.build.attribute
                 priority: -256
+
+    MetaModels\DropzoneFileUploadBundle\EventListener\HandleDropzoneUpload:
+        public: false
+        calls:
+            -   method: setScopeDeterminator
+                arguments:
+                    - "@cca.dc-general.scope-matcher"
+        arguments:
+            - "@filesystem"
+            - '@security.csrf.token_manager'
+            - "%contao.csrf_token_name%"
+            - "%kernel.project_dir%"
+        tags:
+            -   name: kernel.event_listener
+                event: dc-general.contao-frontend.build-widget
+                priority: -128

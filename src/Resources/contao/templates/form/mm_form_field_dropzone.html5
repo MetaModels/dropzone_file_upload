@@ -1,0 +1,43 @@
+<div class="tl_tbox">
+    <div id="<?= 'dropzone_' . $this->controlInputField ?>" class="dropzone dz-container dz-clickable">
+        <div class="dz-default dz-message">
+            <span><?= $this->dropzoneLabel ?></span>
+        </div>
+        <div class="dropzone-previews" id="<?= $this->dropzonePreviews ?>"></div>
+    </div>
+    <?php if ($this->uploadDescription): ?>
+    <p class="tl_help tl_tip" title=""><?= $this->uploadDescription ?></p>
+    <?php endif; ?>
+</div>
+
+<script>
+    function initDropzone() {
+        var test = new Dropzone('div#<?= 'dropzone_' . $this->controlInputField ?>', {
+            url: <?= $this->url ?>,
+            previewsContainer: '#<?= $this->dropzonePreviews ?>',
+            maxFiles: <?= $this->maxFiles ?>,
+            dictMaxFilesExceeded: '<?= $this->dictMaxFilesExceeded ?>',
+            acceptedFiles: '<?= $this->acceptedFiles ?>'
+        }).on('sending', function (file, xmlHttpRequest, formData) {
+            formData.append('REQUEST_TOKEN', '<?= \Contao\RequestToken::get() ?>');
+            formData.append('action', 'dropZoneAjax');
+            formData.append('id', '<?= $this->id ?>');
+            formData.append('uploadFolder', '<?= $this->uploadFolder ?>');
+        }).on('success', function (file, response, progressEvent) {
+            var message = document.createElement('div');
+            message.innerHTML = response.message;
+            file.previewTemplate.appendChild(message);
+
+            if (response.status === 'error') {
+                var errorMessage = response.message;
+                this.emit("error", file, errorMessage);
+            }
+        });
+
+        document.getElementById('<?= 'ctrl_' . $this->controlInputField ?>').style.display = 'none';
+    }
+
+     <?php if (!$this->javascript): ?>
+     initDropzone();
+     <?php endif; ?>
+</script>

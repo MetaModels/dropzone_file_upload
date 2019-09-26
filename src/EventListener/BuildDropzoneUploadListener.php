@@ -96,7 +96,7 @@ final class BuildDropzoneUploadListener
     }
 
     /**
-     * Detect if in the right scope and the attribute is configured as single upload field.
+     * Detect if in the right scope and the attribute is configured as dropzone upload field.
      *
      * @param BuildAttributeEvent $event The event.
      *
