@@ -12,7 +12,8 @@
 
 <script>
     function initDropzone() {
-        var test = new Dropzone('div#<?= 'dropzone_' . $this->controlInputField ?>', {
+        Dropzone.autoDiscover = false;
+        new Dropzone('div#<?= 'dropzone_' . $this->controlInputField ?>', {
             url: <?= $this->url ?>,
             previewsContainer: '#<?= $this->dropzonePreviews ?>',
             maxFiles: <?= $this->maxFiles ?>,
