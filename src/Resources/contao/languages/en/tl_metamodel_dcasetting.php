@@ -29,3 +29,5 @@ $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_limit'][
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_description'][0] = 'Dropzone description';
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_description'][1] =
     'Here can you enter the dropzone description. This append the description for the field.';
+
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['dropzone_settings_legend'] = 'Dropzone settings';
