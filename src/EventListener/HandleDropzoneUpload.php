@@ -350,6 +350,6 @@ final class HandleDropzoneUpload
         $inputProvider = $event->getEnvironment()->getInputProvider();
 
         return ('dropZoneAjax' === $inputProvider->getValue('action'))
-               && ($event->getWidget()->id === $inputProvider->getValue('id'));
+               && $inputProvider->hasValue('id');
     }
 }
