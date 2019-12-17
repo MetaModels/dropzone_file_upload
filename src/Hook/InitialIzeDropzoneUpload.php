@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace MetaModels\DropzoneFileUploadBundle\Contao\Hooks;
+namespace MetaModels\DropzoneFileUploadBundle\Hook;
 
 use Contao\Config;
 use Contao\CoreBundle\Exception\ResponseException;
@@ -75,7 +75,7 @@ final class InitialIzeDropzoneUpload
      *
      * @return string
      */
-    public function onInitialize(string $content, Widget $widget): string
+    public function __invoke(string $content, Widget $widget): string
     {
         if (!$this->isDropzoneUpload($widget)) {
             return $content;

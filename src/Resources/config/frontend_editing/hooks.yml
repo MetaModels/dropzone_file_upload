@@ -1,6 +1,0 @@
-services:
-    MetaModels\DropzoneFileUploadBundle\Contao\Hooks\InitialIzeDropzoneUpload:
-        public: true
-        arguments:
-            - "@translator"
-            - "@request_stack"
