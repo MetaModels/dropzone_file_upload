@@ -122,7 +122,6 @@ final class InitialIzeDropzoneUpload
         }
 
         $response = new JsonResponse($this->prepareAjaxResponse($widget));
-        //$response->headers->set('Content-Type', 'application/json');
 
         throw new ResponseException($response);
     }
@@ -136,25 +135,18 @@ final class InitialIzeDropzoneUpload
      */
     private function prepareAjaxResponse(Widget $widget): array
     {
-        $request = $this->requestStack->getCurrentRequest();
-
         $widget->extensions = $widget->extensions ?: Config::get('uploadTypes');
-        //$widget->name       = $widget->multiple ? \substr($widget->name, 0, $widget->name - 2) : $widget->name;
 
         $this->parseGlobalUploadFiles($widget->name);
 
         $uploadTypes = Config::get('uploadTypes');
         Config::set('uploadTypes', $widget->extensions);
 
-        $tmpFolder = 'system' . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'dropzone';
-        $tmpFolder .= DIRECTORY_SEPARATOR . $request->request->get('REQUEST_TOKEN');
-        $tmpFolder .= DIRECTORY_SEPARATOR . $widget->id;
-
-        new Folder($tmpFolder);
+        new Folder($widget->tempFolder);
 
         $upload = new FileUpload();
         $upload->setName($widget->name);
-        $uploads = $upload->uploadTo($tmpFolder);
+        $uploads = $upload->uploadTo($widget->tempFolder);
 
         Config::set('uploadTypes', $uploadTypes);
 

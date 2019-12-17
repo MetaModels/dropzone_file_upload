@@ -48,20 +48,6 @@ final class HandleDropzoneUpload
     private $filesystem;
 
     /**
-     * The token manager.
-     *
-     * @var CsrfTokenManagerInterface
-     */
-    private $tokenManager;
-
-    /**
-     * The token name.
-     *
-     * @var string
-     */
-    private $tokenName;
-
-    /**
      * The project directory.
      *
      * @var string
@@ -70,13 +56,9 @@ final class HandleDropzoneUpload
 
     public function __construct(
         Filesystem $filesystem,
-        CsrfTokenManagerInterface $tokenManager,
-        string $tokenName,
         string $projectDir
     ) {
         $this->filesystem   = $filesystem;
-        $this->tokenManager = $tokenManager;
-        $this->tokenName    = $tokenName;
         $this->projectDir   = $projectDir;
     }
 
@@ -303,9 +285,8 @@ final class HandleDropzoneUpload
      */
     private function getTempFolder(BuildWidgetEvent $event): ?string
     {
-        $tmpFolder = 'system' . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'dropzone';
-        $tmpFolder .= DIRECTORY_SEPARATOR . $this->tokenManager->getToken($this->tokenName)->getValue();
-        $tmpFolder .= DIRECTORY_SEPARATOR . $event->getWidget()->id;
+        $extra     = $event->getProperty()->getExtra();
+        $tmpFolder = $extra['tempFolder'];
 
         return $this->filesystem->exists($this->projectDir . DIRECTORY_SEPARATOR . $tmpFolder) ? $tmpFolder : null;
     }

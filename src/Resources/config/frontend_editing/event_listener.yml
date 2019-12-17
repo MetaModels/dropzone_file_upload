@@ -7,6 +7,9 @@ services:
                     - "@cca.dc-general.scope-matcher"
         arguments:
             - "@metamodels.view_combination"
+            - "@request_stack"
+            - "@security.csrf.token_storage"
+            - "%contao.csrf_token_name%"
         tags:
             -   name: kernel.event_listener
                 event: metamodels.dc-general.events.metamodel.build.attribute
@@ -20,8 +23,6 @@ services:
                     - "@cca.dc-general.scope-matcher"
         arguments:
             - "@filesystem"
-            - '@security.csrf.token_manager'
-            - "%contao.csrf_token_name%"
             - "%kernel.project_dir%"
         tags:
             -   name: kernel.event_listener

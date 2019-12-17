@@ -22,9 +22,12 @@ declare(strict_types=1);
 namespace MetaModels\DropzoneFileUploadBundle\EventListener;
 
 use ContaoCommunityAlliance\DcGeneral\Contao\RequestScopeDeterminatorAwareTrait;
+use ContaoCommunityAlliance\DcGeneral\Data\ModelId;
 use MetaModels\AttributeFileBundle\Attribute\File;
 use MetaModels\DcGeneral\Events\MetaModel\BuildAttributeEvent;
 use MetaModels\ViewCombination\ViewCombination;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 
 /**
  * This event build the dropzone for upload draggable file field, in the frontend editing scope.
@@ -41,6 +44,27 @@ final class BuildDropzoneUploadListener
     private $viewCombination;
 
     /**
+     * The request stack.
+     *
+     * @var RequestStack
+     */
+    private $request;
+
+    /**
+     * The security csrf token storage.
+     *
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
+
+    /**
+     * The token name.
+     *
+     * @var string
+     */
+    private $tokenName;
+
+    /**
      * The property information from the input screen.
      *
      * @var array
@@ -50,11 +74,21 @@ final class BuildDropzoneUploadListener
     /**
      * The constructor.
      *
-     * @param ViewCombination $viewCombination The view combination.
+     * @param ViewCombination       $viewCombination The view combination.
+     * @param RequestStack          $request         The request.
+     * @param TokenStorageInterface $tokenStorage    The security csrf token storage.
+     * @param string                $tokenName       The token name.
      */
-    public function __construct(ViewCombination $viewCombination)
-    {
+    public function __construct(
+        ViewCombination $viewCombination,
+        RequestStack $request,
+        TokenStorageInterface $tokenStorage,
+        string $tokenName
+    ) {
         $this->viewCombination = $viewCombination;
+        $this->request         = $request;
+        $this->tokenStorage    = $tokenStorage;
+        $this->tokenName       = $tokenName;
     }
 
     /**
@@ -90,9 +124,39 @@ final class BuildDropzoneUploadListener
             'dropzoneLabel'       => $this->information['fe_widget_file_dropzone_label'] ?: null,
             'dropzoneDescription' => $this->information['fe_widget_file_dropzone_description'] ?: null,
             'uploadLimit'         => $this->information['fe_widget_file_dropzone_limit'] ?: null,
+            'tempFolder'          => $this->getTempFolderPath($event)
         ];
 
         $property->setExtra(\array_merge($property->getExtra(), $extra));
+    }
+
+    /**
+     * Get the path for temporary upload folder.
+     *
+     * @param BuildAttributeEvent $event The event.
+     *
+     * @return string
+     */
+    private function getTempFolderPath(BuildAttributeEvent $event): string
+    {
+        $request = $this->request->getMasterRequest();
+
+        $modelId = 'create';
+        if ($request->query->has('id')) {
+            $modelId = ModelId::fromSerialized($request->query->get('id'))->getId();
+        }
+
+        $pieces = [
+            'system',
+            'tmp',
+            'dropzone',
+            $this->tokenStorage->getToken($this->tokenName),
+            $event->getAttribute()->getMetaModel()->getTableName(),
+            $modelId,
+            $event->getAttribute()->getColName()
+        ];
+
+        return \implode(DIRECTORY_SEPARATOR, $pieces);
     }
 
     /**
