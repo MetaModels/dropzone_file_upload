@@ -22,6 +22,7 @@ services:
                 arguments:
                     - "@cca.dc-general.scope-matcher"
         arguments:
+            - "@request_stack"
             - "@filesystem"
             - "%kernel.project_dir%"
         tags:

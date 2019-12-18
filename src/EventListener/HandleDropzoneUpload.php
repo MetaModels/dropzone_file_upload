@@ -31,6 +31,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 /**
@@ -39,6 +40,13 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 final class HandleDropzoneUpload
 {
     use RequestScopeDeterminatorAwareTrait;
+
+    /**
+     * The request stack.
+     *
+     * @var RequestStack
+     */
+    private $request;
 
     /**
      * The filesystem.
@@ -55,9 +63,11 @@ final class HandleDropzoneUpload
     private $projectDir;
 
     public function __construct(
+        RequestStack $request,
         Filesystem $filesystem,
         string $projectDir
     ) {
+        $this->request      = $request;
         $this->filesystem   = $filesystem;
         $this->projectDir   = $projectDir;
     }
@@ -303,8 +313,25 @@ final class HandleDropzoneUpload
         return $this->scopeDeterminator->currentScopeIsFrontend()
                && !$this->scopeDeterminator->currentScopeIsUnknown()
                && ($event->getEnvironment()->getDataDefinition() instanceof MetaModelDataDefinition)
+               && $this->isFormSubmitted($event)
                && $this->isDropzoneUploadField($event)
                && !$this->isAjaxRequest($event);
+    }
+
+    /**
+     * Detect if the form submitted.
+     *
+     * @param BuildWidgetEvent $event The event.
+     *
+     * @return bool
+     */
+    private function isFormSubmitted(BuildWidgetEvent $event): bool
+    {
+        $environment = $event->getEnvironment();
+        $submitted   = $this->request->getMasterRequest()->request;
+
+        return $submitted->has('FORM_SUBMIT')
+               && ($environment->getDataDefinition()->getName() === $submitted->get('FORM_SUBMIT'));
     }
 
     /**
