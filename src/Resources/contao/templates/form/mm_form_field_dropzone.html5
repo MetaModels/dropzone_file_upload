@@ -15,6 +15,8 @@
         Dropzone.autoDiscover = false;
         var dropzone = new Dropzone('div#<?= 'dropzone_' . $this->controlInputField ?>', {
             init: function () {
+                document.getElementById('<?= 'ctrl_' . $this->controlInputField ?>').style.display = 'none';
+
                 <?php foreach ($this->uploadedFiles as $uploadedFile): ?>
                 var mockFile = <?= json_encode($uploadedFile['mockFile']) ?>;
                 mockFile.accepted = true;
@@ -34,11 +36,15 @@
             maxFiles: <?= $this->maxFiles ?>,
             dictMaxFilesExceeded: '<?= $this->dictMaxFilesExceeded ?>',
             acceptedFiles: '<?= $this->acceptedFiles ?>'
-        }).on('sending', function (file, xmlHttpRequest, formData) {
+        });
+
+        dropzone.on('sending', function (file, xmlHttpRequest, formData) {
             formData.append('REQUEST_TOKEN', '<?= \Contao\RequestToken::get() ?>');
             formData.append('action', 'dropZoneAjax');
             formData.append('id', '<?= $this->id ?>');
-        }).on('success', function (file, response, progressEvent) {
+        });
+
+        dropzone.on('success', function (file, response, progressEvent) {
             var message = document.createElement('div');
             message.innerHTML = response.message;
             file.previewTemplate.appendChild(message);
@@ -48,8 +54,6 @@
                 this.emit("error", file, errorMessage);
             }
         });
-
-        document.getElementById('<?= 'ctrl_' . $this->controlInputField ?>').style.display = 'none';
     }
 
      <?php if (!$this->javascript): ?>
