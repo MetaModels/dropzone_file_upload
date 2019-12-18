@@ -27,11 +27,15 @@ use Contao\Environment;
 use Contao\FileUpload;
 use Contao\Folder;
 use Contao\FrontendTemplate;
+use Contao\Image\ResizeConfiguration;
 use Contao\Message;
 use Contao\Widget;
 use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
 use ContaoCommunityAlliance\DcGeneral\ContaoFrontend\Widgets\UploadOnSteroids;
 use MetaModels\DcGeneral\DataDefinition\MetaModelDataDefinition;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -56,15 +60,37 @@ final class InitialIzeDropzoneUpload
     private $requestStack;
 
     /**
+     * The finder.
+     *
+     * @var Finder
+     */
+    private $finder;
+
+    /**
+     * The project directory.
+     *
+     * @var string
+     */
+    private $projectDir;
+
+    /**
      * The constructor.
      *
-     * @param TranslatorInterface $translator   The translator.
-     * @param RequestStack        $requestStack The request stack.
+     * @param TranslatorInterface      $translator      The translator.
+     * @param RequestStack             $requestStack    The request stack.
+     * @param Finder                   $finder          The finder.
+     * @param string                   $projectDir      The project directory.
      */
-    public function __construct(TranslatorInterface $translator, RequestStack $requestStack)
-    {
-        $this->translator   = $translator;
-        $this->requestStack = $requestStack;
+    public function __construct(
+        TranslatorInterface $translator,
+        RequestStack $requestStack,
+        Finder $finder,
+        string $projectDir
+    ) {
+        $this->translator      = $translator;
+        $this->requestStack    = $requestStack;
+        $this->finder          = $finder;
+        $this->projectDir      = $projectDir;
     }
 
     /**
@@ -81,6 +107,7 @@ final class InitialIzeDropzoneUpload
             return $content;
         }
 
+        // Fixme handle the ajax response in a own routing
         $this->handleAjaxResponse($widget);
 
         $this->includeDropZoneAssets();
@@ -100,6 +127,7 @@ final class InitialIzeDropzoneUpload
                 $this->getUploadLimit($widget)
             );
         $dropZone->acceptedFiles        = $this->getAllowedUploadTypes($widget);
+        $dropZone->uploadedFiles        = $this->findUploadedFiles($widget);
 
         return \substr($content, 0, \strrpos($content, '</div>')) . $dropZone->parse() . '</div>';
     }
@@ -233,6 +261,59 @@ final class InitialIzeDropzoneUpload
         }
 
         return \implode(',', $extensions);
+    }
+
+    /**
+     * Find the uploaded files.
+     *
+     * @param Widget $widget The widget.
+     *
+     * @return array
+     */
+    private function findUploadedFiles(Widget $widget): array
+    {
+        $uploadedFiles = [];
+
+        try {
+            $foundFiles = $this->finder->files()->in($this->projectDir . DIRECTORY_SEPARATOR . $widget->tempFolder);
+        } catch (\InvalidArgumentException $exception) {
+            return  $uploadedFiles;
+        }
+
+        if (!$foundFiles->count()) {
+            return $uploadedFiles;
+        }
+
+        // Fixme make a factory for the mime type guesser or use symfony mime component > 4.4.
+        $mimeTypeGuesser = MimeTypeGuesser::getInstance();
+        /** @var SplFileInfo $file */
+        foreach ($foundFiles as $file) {
+            $type = $mimeTypeGuesser->guess($file->getRealPath());
+
+            if (false === \stripos($type, 'image')) {
+                $uploadedFiles[] = [
+                    'mockFile' => [
+                        'name' => $file->getFilename(),
+                        'size' => $file->getSize()
+                    ]
+                ];
+
+                continue;
+            }
+
+            // Fixme return the image in own routing.
+            $src = \System::getContainer()->get('contao.image.image_factory')->create($file->getRealPath(), [120, 120, ResizeConfiguration::MODE_CROP])->getUrl(TL_ROOT);
+            $uploadedFiles[] = [
+                'mockFile' => [
+                    'name' => $file->getFilename(),
+                    'size' => $file->getSize(),
+                    'type' => $type
+                ],
+                'imageUrl' => $src,
+            ];
+        }
+
+        return $uploadedFiles;
     }
 
     /**

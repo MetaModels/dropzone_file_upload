@@ -4,6 +4,8 @@ services:
         arguments:
             - "@translator"
             - "@request_stack"
+            - "@mm.dropzone_file_upload.finder"
+            - "%kernel.project_dir%"
         tags:
             -   name: contao.hook
                 hook: parseWidget

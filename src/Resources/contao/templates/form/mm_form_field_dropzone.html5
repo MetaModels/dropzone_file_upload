@@ -14,6 +14,21 @@
     function initDropzone() {
         Dropzone.autoDiscover = false;
         var dropzone = new Dropzone('div#<?= 'dropzone_' . $this->controlInputField ?>', {
+            init: function () {
+                <?php foreach ($this->uploadedFiles as $uploadedFile): ?>
+                var mockFile = <?= json_encode($uploadedFile['mockFile']) ?>;
+                mockFile.accepted = true;
+
+                this.files.push(mockFile);
+                this.emit('addedfile', mockFile);
+
+                <?php if ($uploadedFile['imageUrl']): ?>
+                this.createThumbnailFromUrl(mockFile, '<?= $uploadedFile['imageUrl'] ?>');
+                <?php endif; ?>
+
+                this.emit('complete', mockFile);
+                <?php endforeach;?>
+            },
             url: <?= $this->url ?>,
             previewsContainer: '#<?= $this->dropzonePreviews ?>',
             maxFiles: <?= $this->maxFiles ?>,

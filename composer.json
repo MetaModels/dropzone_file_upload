@@ -41,8 +41,10 @@
         "metamodels/core": "^2.2@dev",
         "metamodels/attribute_file": "^2.2@dev",
         "symfony/dependency-injection": "4.4.*",
+        "symfony/finder": "4.4.*",
         "symfony/http-kernel": "4.4.*",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "contao/manager-plugin": "^2.8",

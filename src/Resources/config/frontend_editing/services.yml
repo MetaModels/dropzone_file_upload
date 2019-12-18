@@ -1,0 +1,4 @@
+services:
+    mm.dropzone_file_upload.finder:
+        public: false
+        class: Symfony\Component\Finder\Finder

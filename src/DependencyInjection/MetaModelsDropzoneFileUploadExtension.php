@@ -44,6 +44,7 @@ class MetaModelsDropzoneFileUploadExtension extends Extension
 
         // Load configuration for the frontend editing.
         if (\in_array(MetaModelsContaoFrontendEditingBundle::class, $container->getParameter('kernel.bundles'), true)) {
+            $loader->load('frontend_editing/services.yml');
             $loader->load('frontend_editing/event_listener.yml');
             $loader->load('frontend_editing/contao_hook.yml');
         }
