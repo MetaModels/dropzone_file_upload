@@ -28,7 +28,8 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
         'fe_widget_file_dropzone_limit',
         'fe_widget_file_dropzone_label',
         'fe_widget_file_dropzone_hide_label',
-        'fe_widget_file_dropzone_description'
+        'fe_widget_file_dropzone_description',
+        'fe_widget_file_dropzone_template'
     ];
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['file_widgetMode']['fe_single_upload']['dropzone_settings']           =
@@ -103,5 +104,17 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
             'tl_class'       => 'w50 m12'
         ],
         'sql'       => "char(1) NOT NULL default ''",
+    ];
+
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_template'] = [
+        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_template'],
+        'exclude'   => true,
+        'inputType' => 'select',
+        'eval'      => [
+            'tl_class'           => 'w50 clr',
+            'chosen'             => true,
+            'includeBlankOption' => true
+        ],
+        'sql'       => "varchar(64) NOT NULL default ''"
     ];
 }

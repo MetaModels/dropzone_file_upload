@@ -35,5 +35,9 @@ $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_limit'][
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_description'][0] = 'Dropzone description';
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_description'][1] =
     'Here can you enter the dropzone description. This append the description for the field.';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_template'][0]    = 'Custom template to use for dropzone';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_template'][1]    =
+    'Select the template that shall be used for the dropzone. ' .
+    'Valid template files start with "mm_form_field_dropzone".';
 
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['dropzone_settings_legend'] = 'Dropzone settings';

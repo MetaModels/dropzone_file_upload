@@ -124,7 +124,7 @@ final class InitialIzeDropzoneUpload
 
         $this->includeDropZoneAssets();
 
-        $dropZone                       = new FrontendTemplate('mm_form_field_dropzone');
+        $dropZone                       = new FrontendTemplate($widget->dropzoneTemplate);
         $dropZone->requestToken         = RequestToken::get();
         $dropZone->url                  = Environment::get('requestUri');
         $dropZone->removeUrl            = Environment::get('requestUri');

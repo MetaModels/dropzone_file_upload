@@ -120,6 +120,8 @@ final class BuildDropzoneUploadListener
         $property =
             $event->getContainer()->getPropertiesDefinition()->getProperty($event->getAttribute()->getColName());
 
+        $template = $this->information['fe_widget_file_dropzone_template'] ?: 'mm_form_field_dropzone';
+
         $extra = [
             'dropzoneUpload'      => true,
             'dropzoneLabel'       => $this->information['fe_widget_file_dropzone_label'] ?: null,
@@ -127,6 +129,7 @@ final class BuildDropzoneUploadListener
             'uploadLimit'         => $this->information['fe_widget_file_dropzone_limit'] ?: null,
             'addRemoveLinks'      => $this->information['fe_widget_file_dropzone_removable'] ? true : false,
             'hideLabel'           => $this->information['fe_widget_file_dropzone_hide_label'] ? true : false,
+            'dropzoneTemplate'    => $template,
             'tempFolder'          => $this->getTempFolderPath($event)
         ];
 
