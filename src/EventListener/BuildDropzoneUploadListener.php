@@ -27,6 +27,7 @@ use MetaModels\AttributeFileBundle\Attribute\File;
 use MetaModels\DcGeneral\Events\MetaModel\BuildAttributeEvent;
 use MetaModels\ViewCombination\ViewCombination;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 
 /**
@@ -51,11 +52,11 @@ final class BuildDropzoneUploadListener
     private $request;
 
     /**
-     * The security csrf token storage.
+     * The security csrf token manager.
      *
-     * @var TokenStorageInterface
+     * @var CsrfTokenManagerInterface
      */
-    private $tokenStorage;
+    private $tokenManager;
 
     /**
      * The token name.
@@ -74,20 +75,20 @@ final class BuildDropzoneUploadListener
     /**
      * The constructor.
      *
-     * @param ViewCombination       $viewCombination The view combination.
-     * @param RequestStack          $request         The request.
-     * @param TokenStorageInterface $tokenStorage    The security csrf token storage.
-     * @param string                $tokenName       The token name.
+     * @param ViewCombination           $viewCombination The view combination.
+     * @param RequestStack              $request         The request.
+     * @param CsrfTokenManagerInterface $tokenManager    The security csrf token manager.
+     * @param string                    $tokenName       The token name.
      */
     public function __construct(
         ViewCombination $viewCombination,
         RequestStack $request,
-        TokenStorageInterface $tokenStorage,
+        CsrfTokenManagerInterface $tokenManager,
         string $tokenName
     ) {
         $this->viewCombination = $viewCombination;
         $this->request         = $request;
-        $this->tokenStorage    = $tokenStorage;
+        $this->tokenManager    = $tokenManager;
         $this->tokenName       = $tokenName;
     }
 
@@ -150,7 +151,7 @@ final class BuildDropzoneUploadListener
             'system',
             'tmp',
             'dropzone',
-            $this->tokenStorage->getToken($this->tokenName),
+            $this->tokenManager->getToken($this->tokenName),
             $event->getAttribute()->getMetaModel()->getTableName(),
             $modelId,
             $event->getAttribute()->getColName()
