@@ -20,6 +20,9 @@
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone'][0]             = 'Dropzone';
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone'][1]             =
     'If this option dropzone is active, then that widget has a draggable dropzone field.';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_removable'][0]   = 'Removable';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_removable'][1]   =
+    'If this option removable is active, then dropped files can be removed from the dropzone.';
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'][0]       = 'Dropzone label';
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'][1]       =
     'Here you can enter the label text for the dropzone field. This label display in the dropzone field.';

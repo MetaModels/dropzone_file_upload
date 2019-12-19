@@ -2,3 +2,7 @@ services:
     mm.dropzone_file_upload.finder:
         public: false
         class: Symfony\Component\Finder\Finder
+
+    mm.dropzone_file_upload.filesystem:
+        public: false
+        class: Symfony\Component\Filesystem\Filesystem

@@ -24,6 +24,7 @@ use MetaModels\ContaoFrontendEditingBundle\MetaModelsContaoFrontendEditingBundle
 if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer()->getParameter('kernel.bundles'), true)) {
     $paletteProperties = [
         'fe_widget_file_dropzone',
+        'fe_widget_file_dropzone_removable',
         'fe_widget_file_dropzone_limit',
         'fe_widget_file_dropzone_label',
         'fe_widget_file_dropzone_description'
@@ -52,6 +53,7 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_limit'] = [
         'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_limit'],
+        'exclude'   => true,
         'inputType' => 'text',
         'eval'      => [
             'maxlength'     => 6,
@@ -62,6 +64,7 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_label'] = [
         'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'],
+        'exclude'   => true,
         'inputType' => 'text',
         'eval'      => [
             'maxlength'     => 255,
@@ -72,11 +75,22 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_description'] = [
         'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_description'],
+        'exclude'   => true,
         'inputType' => 'text',
         'eval'      => [
             'maxlength'     => 255,
             'tl_class'      => 'w50'
         ],
         'sql'       => "varchar(255) NOT NULL default ''"
+    ];
+
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_removable'] = [
+        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_removable'],
+        'exclude'   => true,
+        'inputType' => 'checkbox',
+        'eval'      => [
+            'tl_class'       => 'w50 m12'
+        ],
+        'sql'       => "char(1) NOT NULL default ''",
     ];
 }

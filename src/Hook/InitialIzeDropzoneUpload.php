@@ -29,10 +29,12 @@ use Contao\Folder;
 use Contao\FrontendTemplate;
 use Contao\Image\ResizeConfiguration;
 use Contao\Message;
+use Contao\RequestToken;
 use Contao\Widget;
 use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
 use ContaoCommunityAlliance\DcGeneral\ContaoFrontend\Widgets\UploadOnSteroids;
 use MetaModels\DcGeneral\DataDefinition\MetaModelDataDefinition;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
@@ -67,6 +69,13 @@ final class InitialIzeDropzoneUpload
     private $finder;
 
     /**
+     * The filesystem.
+     *
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    /**
      * The project directory.
      *
      * @var string
@@ -76,20 +85,23 @@ final class InitialIzeDropzoneUpload
     /**
      * The constructor.
      *
-     * @param TranslatorInterface      $translator      The translator.
-     * @param RequestStack             $requestStack    The request stack.
-     * @param Finder                   $finder          The finder.
-     * @param string                   $projectDir      The project directory.
+     * @param TranslatorInterface $translator   The translator.
+     * @param RequestStack        $requestStack The request stack.
+     * @param Finder              $finder       The finder.
+     * @param Filesystem          $filesystem   The filesystem.
+     * @param string              $projectDir   The project directory.
      */
     public function __construct(
         TranslatorInterface $translator,
         RequestStack $requestStack,
         Finder $finder,
+        Filesystem $filesystem,
         string $projectDir
     ) {
         $this->translator      = $translator;
         $this->requestStack    = $requestStack;
         $this->finder          = $finder;
+        $this->filesystem      = $filesystem;
         $this->projectDir      = $projectDir;
     }
 
@@ -108,12 +120,14 @@ final class InitialIzeDropzoneUpload
         }
 
         // Fixme handle the ajax response in a own routing
-        $this->handleAjaxResponse($widget);
+        $this->handleAjaxRequest($widget);
 
         $this->includeDropZoneAssets();
 
         $dropZone                       = new FrontendTemplate('mm_form_field_dropzone');
-        $dropZone->url                  = '\'' . Environment::get('requestUri') . '\'';
+        $dropZone->requestToken         = RequestToken::get();
+        $dropZone->url                  = Environment::get('requestUri');
+        $dropZone->removeUrl            = Environment::get('requestUri');
         $dropZone->uploadDescription    = $widget->dropzoneDescription ?: '';
         $dropZone->controlInputField    = $widget->id;
         $dropZone->dropzonePreviews     = 'dropzone_previews_' . $widget->id;
@@ -128,20 +142,21 @@ final class InitialIzeDropzoneUpload
             );
         $dropZone->acceptedFiles        = $this->getAllowedUploadTypes($widget);
         $dropZone->uploadedFiles        = $this->findUploadedFiles($widget);
+        $dropZone->addRemoveLinks       = $widget->addRemoveLinks;
 
         return \substr($content, 0, \strrpos($content, '</div>')) . $dropZone->parse() . '</div>';
     }
 
     /**
-     * Handle the ajax response.
+     * Handle the ajax request.
      *
      * @param Widget $widget The widget.
      *
      * @throws ResponseException Throw the ajax response.
      */
-    private function handleAjaxResponse(Widget $widget): void
+    private function handleAjaxRequest(Widget $widget): void
     {
-        $request = $this->requestStack->getCurrentRequest();
+        $request = $this->requestStack->getMasterRequest();
 
         if (('dropZoneAjax' !== $request->request->get('action'))
             || ($widget->id !== $request->request->get('id'))
@@ -149,19 +164,25 @@ final class InitialIzeDropzoneUpload
             return;
         }
 
-        $response = new JsonResponse($this->prepareAjaxResponse($widget));
+        if ($request->request->has('removeFile')) {
+            $response = new JsonResponse($this->doRemoveFile($widget));
+
+            throw new ResponseException($response);
+        }
+
+        $response = new JsonResponse($this->doUploadLoadFile($widget));
 
         throw new ResponseException($response);
     }
 
     /**
-     * Prepare the ajax response.
+     * Handle the ajax request for the uploaded file.
      *
      * @param Widget $widget The widget.
      *
      * @return array
      */
-    private function prepareAjaxResponse(Widget $widget): array
+    private function doUploadLoadFile(Widget $widget): array
     {
         $widget->extensions = $widget->extensions ?: Config::get('uploadTypes');
 
@@ -178,16 +199,57 @@ final class InitialIzeDropzoneUpload
 
         Config::set('uploadTypes', $uploadTypes);
 
-        $status = 'error';
+        $status = 409;
 
         if (\count($uploads) > 0) {
-            $status = 'confirmed';
+            $status = 200;
         }
 
         $message = Message::generate();
         Message::reset();
 
         return ['message' => $message, 'status' => $status];
+    }
+
+    /**
+     * Handle the ajax request for remove file.
+     *
+     * @param Widget $widget The widget.
+     *
+     * @return array
+     */
+    private function doRemoveFile(Widget $widget): array
+    {
+        $notfound = ['message' => 'The file is not found in the temporary folder.', 'status' => 409];
+
+        try {
+            $foundFiles = $this->finder->files()->in($this->projectDir . DIRECTORY_SEPARATOR . $widget->tempFolder);
+        } catch (\InvalidArgumentException $exception) {
+            return  $notfound;
+        }
+
+        if (!$foundFiles->count()) {
+            return $notfound;
+        }
+
+        $searchFilename = $this->requestStack->getMasterRequest()->request->get('removeFile');
+        $foundFile = null;
+        /** @var SplFileInfo $file */
+        foreach ($foundFiles as $file) {
+            if ($searchFilename !== $file->getFilename()) {
+                continue;
+            }
+
+            $foundFile = $file;
+        }
+
+        if (null === $foundFile) {
+            return $notfound;
+        }
+
+        $this->filesystem->remove($foundFile->getRealPath());
+
+        return ['message' => 'The file is successful removed from the temporary upload folder', 'status' => 200];
     }
 
     /**

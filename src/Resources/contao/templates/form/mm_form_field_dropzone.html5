@@ -17,6 +17,10 @@
             init: function () {
                 document.getElementById('<?= 'ctrl_' . $this->controlInputField ?>').style.display = 'none';
 
+                <?php if ($this->addRemoveLinks): ?>
+                this.options.addRemoveLinks = true;
+                <?php endif; ?>
+
                 <?php foreach ($this->uploadedFiles as $uploadedFile): ?>
                 var mockFile = <?= json_encode($uploadedFile['mockFile']) ?>;
                 mockFile.accepted = true;
@@ -31,15 +35,15 @@
                 this.emit('complete', mockFile);
                 <?php endforeach;?>
             },
-            url: <?= $this->url ?>,
+            url: '<?= $this->url ?>',
             previewsContainer: '#<?= $this->dropzonePreviews ?>',
             maxFiles: <?= $this->maxFiles ?>,
             dictMaxFilesExceeded: '<?= $this->dictMaxFilesExceeded ?>',
-            acceptedFiles: '<?= $this->acceptedFiles ?>'
+            acceptedFiles: '<?= $this->acceptedFiles ?>',
         });
 
         dropzone.on('sending', function (file, xmlHttpRequest, formData) {
-            formData.append('REQUEST_TOKEN', '<?= \Contao\RequestToken::get() ?>');
+            formData.append('REQUEST_TOKEN', '<?= $this->requestToken ?>');
             formData.append('action', 'dropZoneAjax');
             formData.append('id', '<?= $this->id ?>');
         });
@@ -49,11 +53,40 @@
             message.innerHTML = response.message;
             file.previewTemplate.appendChild(message);
 
-            if (response.status === 'error') {
+            if (response.status === 409) {
                 var errorMessage = response.message;
-                this.emit("error", file, errorMessage);
+                this.emit('error', file, errorMessage);
             }
         });
+
+        <?php if ($this->addRemoveLinks): ?>
+        dropzone.on('removedfile', function (file) {
+            var xhr = new XMLHttpRequest();
+            xhr.open(dropzone.options.method, '<?= $this->removeUrl ?>');
+            xhr.withCredentials = !!dropzone.options.withCredentials;
+
+            var headers = {
+                'Accept': 'application/json',
+                'Cache-Control': 'no-cache',
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+            for (var headerName in headers) {
+                var headerValue = headers[headerName];
+                if (headerValue) {
+                    xhr.setRequestHeader(headerName, headerValue);
+                }
+            }
+
+            var formData = new FormData();
+            formData.append('REQUEST_TOKEN', '<?= $this->requestToken ?>');
+            formData.append('action', 'dropZoneAjax');
+            formData.append('id', '<?= $this->id ?>');
+            formData.append('removeFile', file.name);
+
+            xhr.send(formData);
+        });
+        <?php endif; ?>
+        console.log(dropzone);
     }
 
      <?php if (!$this->javascript): ?>
