@@ -143,6 +143,7 @@ final class InitialIzeDropzoneUpload
         $dropZone->acceptedFiles        = $this->getAllowedUploadTypes($widget);
         $dropZone->uploadedFiles        = $this->findUploadedFiles($widget);
         $dropZone->addRemoveLinks       = $widget->addRemoveLinks;
+        $dropZone->hideLabel            = $widget->hideLabel;
 
         return \substr($content, 0, \strrpos($content, '</div>')) . $dropZone->parse() . '</div>';
     }

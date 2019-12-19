@@ -126,6 +126,7 @@ final class BuildDropzoneUploadListener
             'dropzoneDescription' => $this->information['fe_widget_file_dropzone_description'] ?: null,
             'uploadLimit'         => $this->information['fe_widget_file_dropzone_limit'] ?: null,
             'addRemoveLinks'      => $this->information['fe_widget_file_dropzone_removable'] ? true : false,
+            'hideLabel'           => $this->information['fe_widget_file_dropzone_hide_label'] ? true : false,
             'tempFolder'          => $this->getTempFolderPath($event)
         ];
 

@@ -27,6 +27,7 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
         'fe_widget_file_dropzone_removable',
         'fe_widget_file_dropzone_limit',
         'fe_widget_file_dropzone_label',
+        'fe_widget_file_dropzone_hide_label',
         'fe_widget_file_dropzone_description'
     ];
 
@@ -68,9 +69,19 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
         'inputType' => 'text',
         'eval'      => [
             'maxlength'     => 255,
-            'tl_class'      => 'w50'
+            'tl_class'      => 'w50 clr'
         ],
         'sql'       => "varchar(255) NOT NULL default ''"
+    ];
+
+    $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_hide_label'] = [
+        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_hide_label'],
+        'exclude'   => true,
+        'inputType' => 'checkbox',
+        'eval'      => [
+            'tl_class'       => 'w50 m12'
+        ],
+        'sql'       => "char(1) NOT NULL default ''",
     ];
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_description'] = [
