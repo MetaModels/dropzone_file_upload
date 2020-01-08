@@ -223,8 +223,9 @@ final class InitialIzeDropzoneUpload
     {
         $notfound = ['message' => 'The file is not found in the temporary folder.', 'status' => 409];
 
+        $tempFolder = $this->projectDir . DIRECTORY_SEPARATOR . $widget->tempFolder;
         try {
-            $foundFiles = $this->finder->files()->in($this->projectDir . DIRECTORY_SEPARATOR . $widget->tempFolder);
+            $foundFiles = $this->finder->files()->in($tempFolder);
         } catch (\InvalidArgumentException $exception) {
             return  $notfound;
         }
@@ -237,6 +238,10 @@ final class InitialIzeDropzoneUpload
         $foundFile = null;
         /** @var SplFileInfo $file */
         foreach ($foundFiles as $file) {
+            // If the finder has one more of directories, filter the search file here.
+            if ($tempFolder !== $file->getPath()) {
+                continue;
+            }
             if ($searchFilename !== $file->getFilename()) {
                 continue;
             }
@@ -337,8 +342,9 @@ final class InitialIzeDropzoneUpload
     {
         $uploadedFiles = [];
 
+        $tempFolder = $this->projectDir . DIRECTORY_SEPARATOR . $widget->tempFolder;
         try {
-            $foundFiles = $this->finder->files()->in($this->projectDir . DIRECTORY_SEPARATOR . $widget->tempFolder);
+            $foundFiles = $this->finder->files()->in($tempFolder);
         } catch (\InvalidArgumentException $exception) {
             return  $uploadedFiles;
         }
@@ -351,6 +357,11 @@ final class InitialIzeDropzoneUpload
         $mimeTypeGuesser = MimeTypeGuesser::getInstance();
         /** @var SplFileInfo $file */
         foreach ($foundFiles as $file) {
+            // If the finder has one more of directories, filter the search file here.
+            if ($tempFolder !== $file->getPath()) {
+                continue;
+            }
+
             $type = $mimeTypeGuesser->guess($file->getRealPath());
 
             if (false === \stripos($type, 'image')) {
