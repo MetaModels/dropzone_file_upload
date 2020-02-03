@@ -24,8 +24,10 @@ namespace MetaModels\DropzoneFileUploadBundle\EventListener;
 use Contao\Dbafs;
 use Contao\FilesModel;
 use Contao\StringUtil;
+use Contao\Widget;
 use ContaoCommunityAlliance\DcGeneral\Contao\RequestScopeDeterminatorAwareTrait;
 use ContaoCommunityAlliance\DcGeneral\ContaoFrontend\Event\BuildWidgetEvent;
+use ContaoCommunityAlliance\DcGeneral\ContaoFrontend\Widgets\UploadOnSteroids;
 use MetaModels\DcGeneral\DataDefinition\MetaModelDataDefinition;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -139,7 +141,8 @@ final class HandleDropzoneUpload
 
         $uploadedFilePath = \current($uploaded);
         $file             = new File($uploadedFilePath);
-        $newFilePath      = $this->moveFileToDestination($file, $uploadFolder, (bool) $widget->doNotOverwrite);
+        $newFilePath      =
+            $this->moveFileToDestination($file, $uploadFolder, (bool) $widget->doNotOverwrite, $widget);
 
         if (!($newUploadFolder = FilesModel::findByPath($newFilePath))) {
             $newUploadFolder = Dbafs::addResource($newFilePath);
@@ -182,7 +185,8 @@ final class HandleDropzoneUpload
         /** @var SplFileInfo $fileInfo */
         foreach ($files as $fileInfo) {
             $file        = new File($fileInfo->getPathname());
-            $newFilePath = $this->moveFileToDestination($file, $uploadFolder, (bool) $widget->doNotOverwrite);
+            $newFilePath =
+                $this->moveFileToDestination($file, $uploadFolder, (bool) $widget->doNotOverwrite, $widget);
 
             if (!($newUploadFolder = FilesModel::findByPath($newFilePath))) {
                 $newUploadFolder = Dbafs::addResource($newFilePath);
@@ -201,15 +205,16 @@ final class HandleDropzoneUpload
     /**
      * Move the file to destination.
      *
-     * @param File   $file         The file.
-     * @param string $uploadFolder The upload folder.
-     * @param bool   $override     Determine for override the file.
+     * @param File                    $file         The file.
+     * @param string                  $uploadFolder The upload folder.
+     * @param bool                    $override     Determine for override the file.
+     * @param Widget|UploadOnSteroids $widget       The widget.
      *
      * @return string
      */
-    private function moveFileToDestination(File $file, string $uploadFolder, bool $override): string
+    private function moveFileToDestination(File $file, string $uploadFolder, bool $override, Widget $widget): string
     {
-        $filename = $file->getFilename();
+        $filename = $widget->parseFilename($file->getFilename());
         if (!$override
             || !\file_exists($this->projectDir . DIRECTORY_SEPARATOR . $uploadFolder . DIRECTORY_SEPARATOR . $filename)
         ) {
@@ -223,21 +228,22 @@ final class HandleDropzoneUpload
 
         $offset = 1;
 
+        $fileInfo   = \pathinfo($filename);
         $allFiles   = \scan($this->projectDir . DIRECTORY_SEPARATOR . $uploadFolder);
         $foundFiles = \preg_grep(
-            '/^' . \preg_quote($file->getBasename('.' . $file->getExtension()), '/') . '.*\.' . \preg_quote($file->getExtension(), '/') . '/',
+            '/^' . \preg_quote($fileInfo['filename'], '/') . '.*\.' . \preg_quote($fileInfo['extension'], '/') . '/',
             $allFiles
         );
 
         foreach ($foundFiles as $foundFile) {
-            if (\preg_match('/__[0-9]+\.' . \preg_quote($file->getExtension(), '/') . '$/', $foundFile)) {
-                $foundFile = \str_replace('.' . $file->getExtension(), '', $foundFile);
+            if (\preg_match('/__[0-9]+\.' . \preg_quote($fileInfo['extension'], '/') . '$/', $foundFile)) {
+                $foundFile = \str_replace('.' . $fileInfo['extension'], '', $foundFile);
 
                 $offset = \max($offset, (int) \substr($foundFile, (\strrpos($foundFile, '_') + 1)));
             }
         }
 
-        $newFilename = $file->getBasename('.' . $file->getExtension()) . '__' . ++$offset . '.' . $file->getExtension();
+        $newFilename = $fileInfo['filename'] . '__' . ++$offset . '.' . $fileInfo['extension'];
         $newFilePath = $uploadFolder . DIRECTORY_SEPARATOR . $newFilename;
         if (!\file_exists($this->projectDir . DIRECTORY_SEPARATOR . $newFilePath)) {
             $this->filesystem
@@ -251,7 +257,7 @@ final class HandleDropzoneUpload
 
         $file = new File($renamedPath);
 
-        return $this->moveFileToDestination($file, $uploadFolder, $override);
+        return $this->moveFileToDestination($file, $uploadFolder, $override, $widget);
     }
 
     /**
@@ -270,8 +276,10 @@ final class HandleDropzoneUpload
             return $uploadFolder->path;
         }
 
+        if ($widget->normalizeExtendFolder) {
+            $widget->extendFolder = StringUtil::generateAlias($widget->extendFolder);
+        }
         $uploadFolderPath = $uploadFolder->path . DIRECTORY_SEPARATOR . $widget->extendFolder;
-
 
         $newUploadFolder = null;
         if (!$this->filesystem->exists($uploadFolderPath)) {
