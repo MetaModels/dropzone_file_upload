@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/dropzone_file_upload.
  *
- * (c) 2019 The MetaModels team.
+ * (c) 2019 - 2020 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,7 +12,8 @@
  *
  * @package    MetaModels/attribute_file
  * @author     Sven Baumann <baumann.sv@gmail.com>
- * @copyright  2019 The MetaModels team.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2019 - 2020 The MetaModels team.
  * @license    https://github.com/MetaModels/dropzone_file_upload/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -26,7 +27,7 @@ $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_removabl
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'][0]       = 'Dropzone label';
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'][1]       =
     'Here you can enter the label text for the dropzone field. This label display in the dropzone field.';
-$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_hide_label'][0]  = 'Hide label';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_hide_label'][0]  = 'Hide label after drop';
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_hide_label'][1]  =
     'If this option hide label is active, then the label hide if a file dropped.';
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_limit'][0]       = 'Dropzone limit';
