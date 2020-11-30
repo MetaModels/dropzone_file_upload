@@ -27,7 +27,7 @@ $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_removabl
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'][0]       = 'Dropzone label';
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'][1]       =
     'Here you can enter the label text for the dropzone field. This label display in the dropzone field.';
-$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_hide_label'][0]  = 'Hide label after drop';
+$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_hide_label'][0]  = 'Hide label after file drop';
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_hide_label'][1]  =
     'If this option hide label is active, then the label hide if a file dropped.';
 $GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_limit'][0]       = 'Dropzone limit';
