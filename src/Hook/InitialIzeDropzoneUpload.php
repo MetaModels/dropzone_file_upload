@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/dropzone_file_upload.
  *
- * (c) 2019 The MetaModels team.
+ * (c) 2022 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,7 +12,8 @@
  *
  * @package    MetaModels/attribute_file
  * @author     Sven Baumann <baumann.sv@gmail.com>
- * @copyright  2019 The MetaModels team.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2022 The MetaModels team.
  * @license    https://github.com/MetaModels/dropzone_file_upload/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -21,6 +22,8 @@ declare(strict_types=1);
 
 namespace MetaModels\DropzoneFileUploadBundle\Hook;
 
+use ContaoCommunityAlliance\DcGeneral\ContaoFrontend\Widgets\UploadOnSteroids;
+use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
 use Contao\Config;
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\Environment;
@@ -31,8 +34,6 @@ use Contao\Image\ResizeConfiguration;
 use Contao\Message;
 use Contao\RequestToken;
 use Contao\Widget;
-use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
-use ContaoCommunityAlliance\DcGeneral\ContaoFrontend\Widgets\UploadOnSteroids;
 use MetaModels\DcGeneral\DataDefinition\MetaModelDataDefinition;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -40,7 +41,7 @@ use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * This initializes the dropzone upload field.
