@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/dropzone_file_upload.
  *
- * (c) 2019 The MetaModels team.
+ * (c) 2019 - 2022 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,7 +12,8 @@
  *
  * @package    MetaModels/attribute_file
  * @author     Sven Baumann <baumann.sv@gmail.com>
- * @copyright  2019 The MetaModels team.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2019 - 2022 The MetaModels team.
  * @license    https://github.com/MetaModels/dropzone_file_upload/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -27,8 +28,6 @@ use MetaModels\AttributeFileBundle\Attribute\File;
 use MetaModels\DcGeneral\Events\MetaModel\BuildAttributeEvent;
 use MetaModels\ViewCombination\ViewCombination;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 
 /**
  * This event build the dropzone for upload draggable file field, in the frontend editing scope.
@@ -52,20 +51,6 @@ final class BuildDropzoneUploadListener
     private $request;
 
     /**
-     * The security csrf token manager.
-     *
-     * @var CsrfTokenManagerInterface
-     */
-    private $tokenManager;
-
-    /**
-     * The token name.
-     *
-     * @var string
-     */
-    private $tokenName;
-
-    /**
      * The property information from the input screen.
      *
      * @var array
@@ -75,21 +60,15 @@ final class BuildDropzoneUploadListener
     /**
      * The constructor.
      *
-     * @param ViewCombination           $viewCombination The view combination.
-     * @param RequestStack              $request         The request.
-     * @param CsrfTokenManagerInterface $tokenManager    The security csrf token manager.
-     * @param string                    $tokenName       The token name.
+     * @param ViewCombination $viewCombination The view combination.
+     * @param RequestStack    $request         The request.
      */
     public function __construct(
         ViewCombination $viewCombination,
-        RequestStack $request,
-        CsrfTokenManagerInterface $tokenManager,
-        string $tokenName
+        RequestStack $request
     ) {
         $this->viewCombination = $viewCombination;
         $this->request         = $request;
-        $this->tokenManager    = $tokenManager;
-        $this->tokenName       = $tokenName;
     }
 
     /**
@@ -152,11 +131,16 @@ final class BuildDropzoneUploadListener
             $modelId = ModelId::fromSerialized($request->query->get('id'))->getId();
         }
 
+        if (null === ($randomPath = $this->request->getCurrentRequest()->getSession()->get('random_upload_path'))) {
+            $randomPath = \md5((string) \time());
+            $this->request->getCurrentRequest()->getSession()->set('random_upload_path', $randomPath);
+        }
+
         $pieces = [
             'system',
             'tmp',
             'dropzone',
-            $this->tokenManager->getToken($this->tokenName),
+            $randomPath,
             $event->getAttribute()->getMetaModel()->getTableName(),
             $modelId,
             $event->getAttribute()->getColName()
