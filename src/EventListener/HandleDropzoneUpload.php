@@ -84,17 +84,23 @@ final class HandleDropzoneUpload
     public function __construct(
         RequestStack $request,
         Filesystem $filesystem,
-        SlugGenerator $slugGenerator = null,
-        string $projectDir
+        string $projectDir,
+        SlugGenerator $slugGenerator = null
     ) {
         if (null === $slugGenerator) {
             $slugGenerator = System::getContainer()->get('contao.slug');
+            // @codingStandardsIgnoreStart
+            @trigger_error(
+                'SlugGenerator $slugGenerator must be passed in the constructor. Fallback will be dropped.',
+                E_USER_DEPRECATED
+            );
+            // @codingStandardsIgnoreEnd
         }
 
         $this->request       = $request;
         $this->filesystem    = $filesystem;
-        $this->slugGenerator = $slugGenerator;
         $this->projectDir    = $projectDir;
+        $this->slugGenerator = $slugGenerator;
     }
 
     /**

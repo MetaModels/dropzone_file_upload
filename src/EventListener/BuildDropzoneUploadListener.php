@@ -139,7 +139,7 @@ final class BuildDropzoneUploadListener
         $session = $request->getSession();
         // NOTE: this check can be removed when depending on symfony/http-foundation 5.0+
         if (null === $session) {
-            throw new \LogicException('No request set on the stack');
+            throw new \LogicException('No session set on the request');
         }
 
         if (null === ($randomPath = $session->get(self::SESSION_KEY_UPLOAD_PATH))) {

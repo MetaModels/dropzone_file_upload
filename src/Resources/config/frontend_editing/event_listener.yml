@@ -22,8 +22,8 @@ services:
         arguments:
             - "@request_stack"
             - "@filesystem"
-            - "@contao.slug"
             - "%kernel.project_dir%"
+            - "@contao.slug"
         tags:
             -   name: kernel.event_listener
                 event: dc-general.contao-frontend.build-widget
