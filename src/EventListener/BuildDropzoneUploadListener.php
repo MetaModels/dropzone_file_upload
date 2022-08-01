@@ -36,26 +36,28 @@ final class BuildDropzoneUploadListener
 {
     use RequestScopeDeterminatorAwareTrait;
 
+    public const SESSION_KEY_UPLOAD_PATH = 'dropzone_upload_path';
+
     /**
      * The view combinations.
      *
      * @var ViewCombination
      */
-    private $viewCombination;
+    private ViewCombination $viewCombination;
 
     /**
      * The request stack.
      *
      * @var RequestStack
      */
-    private $request;
+    private RequestStack $request;
 
     /**
      * The property information from the input screen.
      *
      * @var array
      */
-    private $information;
+    private array $information;
 
     /**
      * The constructor.
@@ -125,15 +127,24 @@ final class BuildDropzoneUploadListener
     private function getTempFolderPath(BuildAttributeEvent $event): string
     {
         $request = $this->request->getMasterRequest();
+        if (null === $request) {
+            throw new \LogicException('No request set on the stack');
+        }
 
         $modelId = 'create';
         if ($request->query->has('id')) {
             $modelId = ModelId::fromSerialized($request->query->get('id'))->getId();
         }
 
-        if (null === ($randomPath = $this->request->getCurrentRequest()->getSession()->get('random_upload_path'))) {
-            $randomPath = \md5((string) \time());
-            $this->request->getCurrentRequest()->getSession()->set('random_upload_path', $randomPath);
+        $session = $request->getSession();
+        // NOTE: this check can be removed when depending on symfony/http-foundation 5.0+
+        if (null === $session) {
+            throw new \LogicException('No request set on the stack');
+        }
+
+        if (null === ($randomPath = $session->get(self::SESSION_KEY_UPLOAD_PATH))) {
+            $randomPath = \md5($session->getId());
+            $session->set(self::SESSION_KEY_UPLOAD_PATH, $randomPath);
         }
 
         $pieces = [
