@@ -8,8 +8,6 @@ services:
         arguments:
             - "@metamodels.view_combination"
             - "@request_stack"
-            - "@security.csrf.token_manager"
-            - "%contao.csrf_token_name%"
         tags:
             -   name: kernel.event_listener
                 event: metamodels.dc-general.events.metamodel.build.attribute
@@ -25,6 +23,7 @@ services:
             - "@request_stack"
             - "@filesystem"
             - "%kernel.project_dir%"
+            - "@contao.slug"
         tags:
             -   name: kernel.event_listener
                 event: dc-general.contao-frontend.build-widget

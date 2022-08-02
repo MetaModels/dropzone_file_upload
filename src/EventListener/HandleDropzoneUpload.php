@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/dropzone_file_upload.
  *
- * (c) 2019 The MetaModels team.
+ * (c) 2019 - 2022 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,7 +12,8 @@
  *
  * @package    MetaModels/attribute_file
  * @author     Sven Baumann <baumann.sv@gmail.com>
- * @copyright  2019 The MetaModels team.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2019 - 2022 The MetaModels team.
  * @license    https://github.com/MetaModels/dropzone_file_upload/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -21,9 +22,11 @@ declare(strict_types=1);
 
 namespace MetaModels\DropzoneFileUploadBundle\EventListener;
 
+use Contao\CoreBundle\Slug\Slug as SlugGenerator;
 use Contao\Dbafs;
 use Contao\FilesModel;
 use Contao\StringUtil;
+use Contao\System;
 use Contao\Widget;
 use ContaoCommunityAlliance\DcGeneral\Contao\RequestScopeDeterminatorAwareTrait;
 use ContaoCommunityAlliance\DcGeneral\ContaoFrontend\Event\BuildWidgetEvent;
@@ -34,7 +37,6 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 /**
  * This handle the file/s, where with dropzone uploaded.
@@ -48,30 +50,57 @@ final class HandleDropzoneUpload
      *
      * @var RequestStack
      */
-    private $request;
+    private RequestStack $request;
 
     /**
      * The filesystem.
      *
      * @var Filesystem
      */
-    private $filesystem;
+    private Filesystem $filesystem;
+
+    /**
+     * The slug generator.
+     *
+     * @var SlugGenerator
+     */
+    private SlugGenerator $slugGenerator;
 
     /**
      * The project directory.
      *
      * @var string
      */
-    private $projectDir;
+    private string $projectDir;
 
+    /**
+     * The constructor.
+     *
+     * @param RequestStack       $request       The request.
+     * @param Filesystem         $filesystem    The filesystem.
+     * @param SlugGenerator|null $slugGenerator The slug generator.
+     * @param String             $projectDir    The project directory.
+     */
     public function __construct(
         RequestStack $request,
         Filesystem $filesystem,
-        string $projectDir
+        string $projectDir,
+        SlugGenerator $slugGenerator = null
     ) {
-        $this->request      = $request;
-        $this->filesystem   = $filesystem;
-        $this->projectDir   = $projectDir;
+        if (null === $slugGenerator) {
+            $slugGenerator = System::getContainer()->get('contao.slug');
+            // @codingStandardsIgnoreStart
+            @trigger_error(
+                'SlugGenerator $slugGenerator must be passed in the constructor. Fallback will be dropped.',
+                E_USER_DEPRECATED
+            );
+            // @codingStandardsIgnoreEnd
+        }
+
+        $this->request       = $request;
+        $this->filesystem    = $filesystem;
+        $this->projectDir    = $projectDir;
+        $this->slugGenerator = $slugGenerator;
     }
 
     /**
@@ -277,7 +306,8 @@ final class HandleDropzoneUpload
         }
 
         if ($widget->normalizeExtendFolder) {
-            $widget->extendFolder = StringUtil::generateAlias($widget->extendFolder);
+            $widget->extendFolder =
+                $this->slugGenerator->generate((string) $widget->extendFolder, $this->getSlugOptions());
         }
         $uploadFolderPath = $uploadFolder->path . DIRECTORY_SEPARATOR . $widget->extendFolder;
 
@@ -367,5 +397,16 @@ final class HandleDropzoneUpload
 
         return ('dropZoneAjax' === $inputProvider->getValue('action'))
                && $inputProvider->hasValue('id');
+    }
+
+    /**
+     * Get the slug options.
+     *
+     * @return array
+     */
+    protected function getSlugOptions(): array
+    {
+        // TODO: make configurable.
+        return ['locale' => 'de', 'validChars' => '0-9a-z_-'];
     }
 }

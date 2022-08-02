@@ -43,7 +43,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
- * This initialize the dropzone upload field.
+ * This initializes the dropzone upload field.
  */
 final class InitialIzeDropzoneUpload
 {
