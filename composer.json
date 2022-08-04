@@ -39,7 +39,7 @@
     "contao-community-alliance/dc-general": "^2.3@dev",
     "contao-community-alliance/meta-palettes": "^2.0",
     "contao-components/dropzone": "^5.0.1",
-    "contao/core-bundle": "^4.9.0, <4.13.0",
+    "contao/core-bundle": "^4.13.5, <5.0",
     "metamodels/attribute_file": "^2.3@dev",
     "metamodels/core": "^2.3@dev",
     "symfony/dependency-injection": "^5.4",
@@ -66,7 +66,7 @@
   "extra": {
     "contao-manager-plugin": "MetaModels\\DropzoneFileUploadBundle\\ContaoManager\\Plugin",
     "branch-alias": {
-      "dev-release/2.3.0": "2.3.x-dev"
+      "dev-feature/2.3.0": "2.3.x-dev"
     }
   },
   "config": {
