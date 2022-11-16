@@ -42,16 +42,16 @@
     "contao/core-bundle": "^4.9.0, <4.13.0",
     "metamodels/attribute_file": "^2.2",
     "metamodels/core": "^2.2",
-    "symfony/dependency-injection": "4.4.*",
+    "symfony/dependency-injection": "^4.4.6",
     "symfony/filesystem": "4.4.*",
     "symfony/finder": "4.4.*",
     "symfony/http-foundation": "4.4.*",
-    "symfony/http-kernel": "4.4.*"
+    "symfony/http-kernel": "~4.4.13"
   },
   "require-dev": {
     "contao/manager-bundle": "^4.9.0, <4.13.0",
     "contao/manager-plugin": "^2.8",
-    "metamodels/contao-frontend-editing": "^2.2@dev",
+    "metamodels/contao-frontend-editing": "^2.2",
     "phpcq/all-tasks": "^1.2"
   },
   "autoload": {
