@@ -67,7 +67,7 @@
   "extra": {
     "contao-manager-plugin": "MetaModels\\DropzoneFileUploadBundle\\ContaoManager\\Plugin",
     "branch-alias": {
-      "dev-release/2.2.0": "2.2.x-dev"
+      "dev-hotfix/2.2.1": "2.2.1-dev"
     }
   },
   "config": {
