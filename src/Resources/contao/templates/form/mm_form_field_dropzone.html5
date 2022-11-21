@@ -1,0 +1,108 @@
+<div class="tl_tbox">
+    <div id="<?= 'dropzone_' . $this->controlInputField ?>" class="dropzone dz-container dz-clickable">
+        <div class="dz-default dz-message">
+            <span><?= $this->dropzoneLabel ?></span>
+        </div>
+        <div class="dropzone-previews" id="<?= $this->dropzonePreviews ?>"></div>
+    </div>
+    <?php if ($this->uploadDescription): ?>
+    <p class="tl_help tl_tip" title=""><?= $this->uploadDescription ?></p>
+    <?php endif; ?>
+</div>
+
+<script>
+    function initDropzone() {
+        Dropzone.autoDiscover = false;
+        var dropzone = new Dropzone('div#dropzone_<?= $this->controlInputField ?>', {
+            init: function () {
+                document.getElementById('<?= 'ctrl_' . $this->controlInputField ?>').style.display = 'none';
+
+                <?php if ($this->addRemoveLinks): ?>
+                this.options.addRemoveLinks = true;
+                <?php endif; ?>
+
+                <?php foreach ($this->uploadedFiles as $uploadedFile): ?>
+                var mockFile = <?= json_encode($uploadedFile['mockFile']) ?>;
+                mockFile.accepted = true;
+
+                this.files.push(mockFile);
+                this.emit('addedfile', mockFile);
+
+                <?php if ($uploadedFile['imageUrl']): ?>
+                this.createThumbnailFromUrl(mockFile, '<?= $uploadedFile['imageUrl'] ?>');
+                <?php endif; ?>
+
+                this.emit('complete', mockFile);
+                <?php endforeach;?>
+
+                <?php if ($this->hideLabel && count($this->uploadedFiles)): ?>
+                document.querySelector('#dropzone_<?= $this->controlInputField ?> .dz-message').style.display = 'none';
+                <?php endif; ?>
+            },
+            url: '<?= $this->url ?>',
+            previewsContainer: '#<?= $this->dropzonePreviews ?>',
+            maxFiles: <?= $this->maxFiles ?>,
+            dictMaxFilesExceeded: '<?= $this->dictMaxFilesExceeded ?>',
+            acceptedFiles: '<?= $this->acceptedFiles ?>',
+        });
+
+        dropzone.on('sending', function (file, xmlHttpRequest, formData) {
+            formData.append('REQUEST_TOKEN', '<?= $this->requestToken ?>');
+            formData.append('action', 'dropZoneAjax');
+            formData.append('id', '<?= $this->id ?>');
+
+            <?php if ($this->hideLabel): ?>
+            document.querySelector('#dropzone_<?= $this->controlInputField ?> .dz-message').style.display = 'none';
+            <?php endif; ?>
+        });
+
+        dropzone.on('success', function (file, response, progressEvent) {
+            var message = document.createElement('div');
+            message.innerHTML = response.message;
+            file.previewTemplate.appendChild(message);
+
+            if (response.status === 409) {
+                var errorMessage = response.message;
+                this.emit('error', file, errorMessage);
+            }
+        });
+
+        <?php if ($this->addRemoveLinks): ?>
+        dropzone.on('removedfile', function (file) {
+            var xhr = new XMLHttpRequest();
+            xhr.open(dropzone.options.method, '<?= $this->removeUrl ?>');
+            xhr.withCredentials = !!dropzone.options.withCredentials;
+
+            var headers = {
+                'Accept': 'application/json',
+                'Cache-Control': 'no-cache',
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+            for (var headerName in headers) {
+                var headerValue = headers[headerName];
+                if (headerValue) {
+                    xhr.setRequestHeader(headerName, headerValue);
+                }
+            }
+
+            var formData = new FormData();
+            formData.append('REQUEST_TOKEN', '<?= $this->requestToken ?>');
+            formData.append('action', 'dropZoneAjax');
+            formData.append('id', '<?= $this->id ?>');
+            formData.append('removeFile', file.name);
+
+            xhr.send(formData);
+
+            <?php if ($this->hideLabel): ?>
+            if (!dropzone.files.length) {
+                document.querySelector('#dropzone_<?= $this->controlInputField ?> .dz-message').style.removeProperty('display');
+            }
+            <?php endif; ?>
+        });
+        <?php endif; ?>
+    }
+
+     <?php if (!$this->javascript): ?>
+     initDropzone();
+     <?php endif; ?>
+</script>

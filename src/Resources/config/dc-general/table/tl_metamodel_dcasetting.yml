@@ -1,0 +1,10 @@
+services:
+    MetaModels\DropzoneFileUploadBundle\EventListener\DcGeneral\Table\DcaSetting\TemplateOptionListener:
+        arguments:
+            - '@cca.dc-general.scope-matcher'
+            - '@MetaModels\IFactory'
+            - '@database_connection'
+            - '@metamodels.template_list'
+        tags:
+            - name: kernel.event_listener
+              event: dc-general.view.contao2backend.get-property-options

@@ -1,0 +1,12 @@
+services:
+    MetaModels\DropzoneFileUploadBundle\Hook\InitialIzeDropzoneUpload:
+        public: false
+        arguments:
+            - "@translator"
+            - "@request_stack"
+            - "@mm.dropzone_file_upload.finder"
+            - "@mm.dropzone_file_upload.filesystem"
+            - "%kernel.project_dir%"
+        tags:
+            -   name: contao.hook
+                hook: parseWidget

@@ -1,0 +1,30 @@
+services:
+    MetaModels\DropzoneFileUploadBundle\EventListener\BuildDropzoneUploadListener:
+        public: false
+        calls:
+            -   method: setScopeDeterminator
+                arguments:
+                    - "@cca.dc-general.scope-matcher"
+        arguments:
+            - "@metamodels.view_combination"
+            - "@request_stack"
+        tags:
+            -   name: kernel.event_listener
+                event: metamodels.dc-general.events.metamodel.build.attribute
+                priority: -256
+
+    MetaModels\DropzoneFileUploadBundle\EventListener\HandleDropzoneUpload:
+        public: false
+        calls:
+            -   method: setScopeDeterminator
+                arguments:
+                    - "@cca.dc-general.scope-matcher"
+        arguments:
+            - "@request_stack"
+            - "@filesystem"
+            - "%kernel.project_dir%"
+            - "@contao.slug"
+        tags:
+            -   name: kernel.event_listener
+                event: dc-general.contao-frontend.build-widget
+                priority: -128

@@ -1,0 +1,80 @@
+{
+  "name": "metamodels/dropzone_file_upload",
+  "description": "MetaModels dropzone for the attribute file",
+  "keywords": [
+    "contao",
+    "metamodels",
+    "attribute",
+    "file",
+    "dropzone",
+    "upload"
+  ],
+  "type": "contao-bundle",
+  "homepage": "https://now.metamodel.me/",
+  "license": "LGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Christian Schiffler",
+      "email": "c.schiffler@cyberspectrum.de",
+      "homepage": "https://www.cyberspectrum.de",
+      "role": "Developer"
+    },
+    {
+      "name": "Sven Baumann",
+      "email": "baumann.sv@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "mail@metamodel.me",
+    "issues": "https://github.com/MetaModels/dropzone_file_upload/issues",
+    "wiki": "https://de.contaowiki.org/MetaModels",
+    "irc": "irc://irc.freenode.org/contao.mm",
+    "source": "https://github.com/MetaModels/dropzone_file_upload"
+  },
+  "require": {
+    "php": "^7.4",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "contao-community-alliance/dc-general": "^2.2",
+    "contao-community-alliance/meta-palettes": "^2.0",
+    "contao-components/dropzone": "^5.0.1",
+    "contao/core-bundle": "^4.9.0, <4.13.0",
+    "metamodels/attribute_file": "^2.2",
+    "metamodels/core": "^2.2",
+    "symfony/dependency-injection": "^4.4.6",
+    "symfony/filesystem": "4.4.*",
+    "symfony/finder": "4.4.*",
+    "symfony/http-foundation": "4.4.*",
+    "symfony/http-kernel": "~4.4.13"
+  },
+  "require-dev": {
+    "contao/manager-bundle": "^4.9.0, <4.13.0",
+    "contao/manager-plugin": "^2.8",
+    "metamodels/contao-frontend-editing": "^2.2",
+    "phpcq/all-tasks": "^1.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "MetaModels\\DropzoneFileUploadBundle\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MetaModels\\DropzoneFileUploadBundle\\Test\\": "tests"
+    }
+  },
+  "extra": {
+    "contao-manager-plugin": "MetaModels\\DropzoneFileUploadBundle\\ContaoManager\\Plugin",
+    "branch-alias": {
+      "dev-release/2.2.0": "2.2.x-dev"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "contao-components/installer": false,
+      "contao/manager-plugin": false
+    },
+    "sort-packages": true
+  }
+}
