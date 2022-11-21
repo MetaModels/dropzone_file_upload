@@ -24,6 +24,7 @@ namespace MetaModels\DropzoneFileUploadBundle\EventListener;
 
 use ContaoCommunityAlliance\DcGeneral\Contao\RequestScopeDeterminatorAwareTrait;
 use ContaoCommunityAlliance\DcGeneral\Data\ModelId;
+use LogicException;
 use MetaModels\AttributeFileBundle\Attribute\File;
 use MetaModels\DcGeneral\Events\MetaModel\BuildAttributeEvent;
 use MetaModels\ViewCombination\ViewCombination;
@@ -123,12 +124,15 @@ final class BuildDropzoneUploadListener
      * @param BuildAttributeEvent $event The event.
      *
      * @return string
+     *
+     * @throws LogicException No request set on the stack.
+     * @throws LogicException No session set on the request.
      */
     private function getTempFolderPath(BuildAttributeEvent $event): string
     {
         $request = $this->request->getMasterRequest();
         if (null === $request) {
-            throw new \LogicException('No request set on the stack');
+            throw new LogicException('No request set on the stack');
         }
 
         $modelId = 'create';
@@ -139,7 +143,7 @@ final class BuildDropzoneUploadListener
         $session = $request->getSession();
         // NOTE: this check can be removed when depending on symfony/http-foundation 5.0+
         if (null === $session) {
-            throw new \LogicException('No session set on the request');
+            throw new LogicException('No session set on the request');
         }
 
         if (null === ($randomPath = $session->get(self::SESSION_KEY_UPLOAD_PATH))) {

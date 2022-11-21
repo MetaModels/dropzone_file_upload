@@ -1,3 +1,20 @@
-vendor
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.buildpath
+.project
+.settings/
+.build/
+.external*/
+.idea/
+nbproject/
+
+# composer related
+vendor/
+
+# build
+build/
 composer.lock
-.idea
+.phpunit.result.cache

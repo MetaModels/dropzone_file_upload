@@ -10,13 +10,13 @@
     "upload"
   ],
   "type": "contao-bundle",
-  "homepage": "http://now.metamodel.me/",
+  "homepage": "https://now.metamodel.me/",
   "license": "LGPL-3.0-or-later",
   "authors": [
     {
       "name": "Christian Schiffler",
       "email": "c.schiffler@cyberspectrum.de",
-      "homepage": "http://www.cyberspectrum.de",
+      "homepage": "https://www.cyberspectrum.de",
       "role": "Developer"
     },
     {
@@ -28,7 +28,7 @@
   "support": {
     "email": "mail@metamodel.me",
     "issues": "https://github.com/MetaModels/dropzone_file_upload/issues",
-    "wiki": "http://de.contaowiki.org/MetaModels",
+    "wiki": "https://de.contaowiki.org/MetaModels",
     "irc": "irc://irc.freenode.org/contao.mm",
     "source": "https://github.com/MetaModels/dropzone_file_upload"
   },
@@ -45,12 +45,13 @@
     "symfony/dependency-injection": "^5.4",
     "symfony/filesystem": "^5.4",
     "symfony/finder": "^5.4",
+    "symfony/http-foundation": "^5.4",
     "symfony/http-kernel": "^5.4"
   },
   "require-dev": {
     "contao/manager-bundle": "^4.9.0, <4.13.0",
     "contao/manager-plugin": "^2.8",
-    "metamodels/contao-frontend-editing": "^2.2@dev",
+    "metamodels/contao-frontend-editing": "^2.2",
     "phpcq/all-tasks": "^1.2"
   },
   "autoload": {
@@ -70,6 +71,10 @@
     }
   },
   "config": {
+    "allow-plugins": {
+      "contao-components/installer": false,
+      "contao/manager-plugin": false
+    },
     "sort-packages": true
   }
 }

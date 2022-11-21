@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/dropzone_file_upload.
  *
- * (c) 2022 The MetaModels team.
+ * (c) 2019-2022 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,7 +13,7 @@
  * @package    MetaModels/attribute_file
  * @author     Sven Baumann <baumann.sv@gmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
- * @copyright  2022 The MetaModels team.
+ * @copyright  2019-2022 The MetaModels team.
  * @license    https://github.com/MetaModels/dropzone_file_upload/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -99,11 +99,11 @@ final class InitialIzeDropzoneUpload
         Filesystem $filesystem,
         string $projectDir
     ) {
-        $this->translator      = $translator;
-        $this->requestStack    = $requestStack;
-        $this->finder          = $finder;
-        $this->filesystem      = $filesystem;
-        $this->projectDir      = $projectDir;
+        $this->translator   = $translator;
+        $this->requestStack = $requestStack;
+        $this->finder       = $finder;
+        $this->filesystem   = $filesystem;
+        $this->projectDir   = $projectDir;
     }
 
     /**
@@ -120,7 +120,6 @@ final class InitialIzeDropzoneUpload
             return $content;
         }
 
-        // Fixme handle the ajax response in a own routing
         $this->handleAjaxRequest($widget);
 
         $this->includeDropZoneAssets();
@@ -153,6 +152,8 @@ final class InitialIzeDropzoneUpload
      * Handle the ajax request.
      *
      * @param Widget $widget The widget.
+     *
+     * @return void
      *
      * @throws ResponseException Throw the ajax response.
      */
@@ -236,7 +237,7 @@ final class InitialIzeDropzoneUpload
         }
 
         $searchFilename = $this->requestStack->getMasterRequest()->request->get('removeFile');
-        $foundFile = null;
+        $foundFile      = null;
         /** @var SplFileInfo $file */
         foreach ($foundFiles as $file) {
             // If the finder has one more of directories, filter the search file here.
@@ -265,6 +266,8 @@ final class InitialIzeDropzoneUpload
      * @param string $propertyName The property name.
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     private function parseGlobalUploadFiles(string $propertyName): void
     {
@@ -287,6 +290,8 @@ final class InitialIzeDropzoneUpload
      * Include drop zone assets.
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     private function includeDropZoneAssets()
     {
@@ -354,7 +359,6 @@ final class InitialIzeDropzoneUpload
             return $uploadedFiles;
         }
 
-        // Fixme make a factory for the mime type guesser or use symfony mime component > 4.4.
         $mimeTypeGuesser = MimeTypeGuesser::getInstance();
         /** @var SplFileInfo $file */
         foreach ($foundFiles as $file) {
@@ -376,8 +380,9 @@ final class InitialIzeDropzoneUpload
                 continue;
             }
 
-            // Fixme return the image in own routing.
-            $src = \System::getContainer()->get('contao.image.image_factory')->create($file->getRealPath(), [120, 120, ResizeConfiguration::MODE_CROP])->getUrl(TL_ROOT);
+            $src             = \System::getContainer()->get('contao.image.image_factory')
+                ->create($file->getRealPath(), [120, 120, ResizeConfiguration::MODE_CROP])
+                ->getUrl(TL_ROOT);
             $uploadedFiles[] = [
                 'mockFile' => [
                     'name' => $file->getFilename(),

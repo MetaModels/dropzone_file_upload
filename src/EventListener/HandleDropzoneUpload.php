@@ -78,8 +78,8 @@ final class HandleDropzoneUpload
      *
      * @param RequestStack       $request       The request.
      * @param Filesystem         $filesystem    The filesystem.
+     * @param string             $projectDir    The project directory.
      * @param SlugGenerator|null $slugGenerator The slug generator.
-     * @param String             $projectDir    The project directory.
      */
     public function __construct(
         RequestStack $request,
@@ -272,7 +272,7 @@ final class HandleDropzoneUpload
             }
         }
 
-        $newFilename = $fileInfo['filename'] . '__' . ++$offset . '.' . $fileInfo['extension'];
+        $newFilename = $fileInfo['filename'] . '__' . (++$offset) . '.' . $fileInfo['extension'];
         $newFilePath = $uploadFolder . DIRECTORY_SEPARATOR . $newFilename;
         if (!\file_exists($this->projectDir . DIRECTORY_SEPARATOR . $newFilePath)) {
             $this->filesystem
@@ -327,7 +327,7 @@ final class HandleDropzoneUpload
     /**
      * Get the temporary folder.
      *
-     * @param BuildWidgetEvent $event
+     * @param BuildWidgetEvent $event The event.
      *
      * @return string|null
      */
@@ -406,7 +406,6 @@ final class HandleDropzoneUpload
      */
     protected function getSlugOptions(): array
     {
-        // TODO: make configurable.
         return ['locale' => 'de', 'validChars' => '0-9a-z_-'];
     }
 }
