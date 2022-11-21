@@ -265,6 +265,8 @@ final class InitialIzeDropzoneUpload
      * @param string $propertyName The property name.
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     private function parseGlobalUploadFiles(string $propertyName): void
     {
@@ -287,6 +289,8 @@ final class InitialIzeDropzoneUpload
      * Include drop zone assets.
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     private function includeDropZoneAssets()
     {
