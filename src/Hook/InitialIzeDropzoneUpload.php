@@ -99,11 +99,11 @@ final class InitialIzeDropzoneUpload
         Filesystem $filesystem,
         string $projectDir
     ) {
-        $this->translator      = $translator;
-        $this->requestStack    = $requestStack;
-        $this->finder          = $finder;
-        $this->filesystem      = $filesystem;
-        $this->projectDir      = $projectDir;
+        $this->translator   = $translator;
+        $this->requestStack = $requestStack;
+        $this->finder       = $finder;
+        $this->filesystem   = $filesystem;
+        $this->projectDir   = $projectDir;
     }
 
     /**
@@ -153,6 +153,8 @@ final class InitialIzeDropzoneUpload
      * Handle the ajax request.
      *
      * @param Widget $widget The widget.
+     *
+     * @return void
      *
      * @throws ResponseException Throw the ajax response.
      */
@@ -236,7 +238,7 @@ final class InitialIzeDropzoneUpload
         }
 
         $searchFilename = $this->requestStack->getMasterRequest()->request->get('removeFile');
-        $foundFile = null;
+        $foundFile      = null;
         /** @var SplFileInfo $file */
         foreach ($foundFiles as $file) {
             // If the finder has one more of directories, filter the search file here.
@@ -381,7 +383,9 @@ final class InitialIzeDropzoneUpload
             }
 
             // Fixme return the image in own routing.
-            $src = \System::getContainer()->get('contao.image.image_factory')->create($file->getRealPath(), [120, 120, ResizeConfiguration::MODE_CROP])->getUrl(TL_ROOT);
+            $src             = \System::getContainer()->get('contao.image.image_factory')
+                ->create($file->getRealPath(), [120, 120, ResizeConfiguration::MODE_CROP])
+                ->getUrl(TL_ROOT);
             $uploadedFiles[] = [
                 'mockFile' => [
                     'name' => $file->getFilename(),
