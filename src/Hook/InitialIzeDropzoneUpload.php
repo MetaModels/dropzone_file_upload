@@ -120,7 +120,6 @@ final class InitialIzeDropzoneUpload
             return $content;
         }
 
-        // Fixme handle the ajax response in a own routing
         $this->handleAjaxRequest($widget);
 
         $this->includeDropZoneAssets();
@@ -360,7 +359,6 @@ final class InitialIzeDropzoneUpload
             return $uploadedFiles;
         }
 
-        // Fixme make a factory for the mime type guesser or use symfony mime component > 4.4.
         $mimeTypeGuesser = MimeTypeGuesser::getInstance();
         /** @var SplFileInfo $file */
         foreach ($foundFiles as $file) {
@@ -382,7 +380,6 @@ final class InitialIzeDropzoneUpload
                 continue;
             }
 
-            // Fixme return the image in own routing.
             $src             = \System::getContainer()->get('contao.image.image_factory')
                 ->create($file->getRealPath(), [120, 120, ResizeConfiguration::MODE_CROP])
                 ->getUrl(TL_ROOT);

@@ -406,7 +406,6 @@ final class HandleDropzoneUpload
      */
     protected function getSlugOptions(): array
     {
-        // TODO: make configurable.
         return ['locale' => 'de', 'validChars' => '0-9a-z_-'];
     }
 }
