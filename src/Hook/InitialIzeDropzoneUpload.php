@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/dropzone_file_upload.
  *
- * (c) 2019-2022 The MetaModels team.
+ * (c) 2019-2023 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,7 +13,7 @@
  * @package    MetaModels/attribute_file
  * @author     Sven Baumann <baumann.sv@gmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
- * @copyright  2019-2022 The MetaModels team.
+ * @copyright  2019-2023 The MetaModels team.
  * @license    https://github.com/MetaModels/dropzone_file_upload/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -38,9 +38,9 @@ use MetaModels\DcGeneral\DataDefinition\MetaModelDataDefinition;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Mime\MimeTypes;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -271,7 +271,7 @@ final class InitialIzeDropzoneUpload
      */
     private function parseGlobalUploadFiles(string $propertyName): void
     {
-        $files = array();
+        $files = [];
 
         foreach ($_FILES['file'] as $param => $value) {
             if (!is_array($param)) {
@@ -359,7 +359,7 @@ final class InitialIzeDropzoneUpload
             return $uploadedFiles;
         }
 
-        $mimeTypeGuesser = MimeTypeGuesser::getInstance();
+        $mimeTypeGuesser = new MimeTypes();
         /** @var SplFileInfo $file */
         foreach ($foundFiles as $file) {
             // If the finder has one more of directories, filter the search file here.
@@ -367,7 +367,7 @@ final class InitialIzeDropzoneUpload
                 continue;
             }
 
-            $type = $mimeTypeGuesser->guess($file->getRealPath());
+            $type = $mimeTypeGuesser->guessMimeType($file->getRealPath());
 
             if (false === \stripos($type, 'image')) {
                 $uploadedFiles[] = [
