@@ -18,25 +18,26 @@
                 document.getElementById('<?= 'ctrl_' . $this->controlInputField ?>').style.display = 'none';
 
                 <?php if ($this->addRemoveLinks): ?>
-                this.options.addRemoveLinks = true;
+                    this.options.addRemoveLinks = true;
                 <?php endif; ?>
 
                 <?php foreach ($this->uploadedFiles as $uploadedFile): ?>
-                var mockFile = <?= json_encode($uploadedFile['mockFile']) ?>;
-                mockFile.accepted = true;
+                    var mockFile = <?= json_encode($uploadedFile['mockFile']) ?>;
+                    mockFile.accepted = true;
 
-                this.files.push(mockFile);
-                this.emit('addedfile', mockFile);
+                    this.files.push(mockFile);
 
-                <?php if ($uploadedFile['imageUrl']): ?>
-                this.createThumbnailFromUrl(mockFile, '<?= $uploadedFile['imageUrl'] ?>');
-                <?php endif; ?>
+                    <?php if (!empty($uploadedFile['imageUrl'])): ?>
+                        this.displayExistingFile(mockFile, '<?= $uploadedFile['imageUrl'] ?>');
+                    <?php else: ?>
+                        this.emit('addedfile', mockFile);
+                    <?php endif; ?>
 
-                this.emit('complete', mockFile);
+                    this.emit('complete', mockFile);
                 <?php endforeach;?>
 
                 <?php if ($this->hideLabel && count($this->uploadedFiles)): ?>
-                document.querySelector('#dropzone_<?= $this->controlInputField ?> .dz-message').style.display = 'none';
+                    document.querySelector('#dropzone_<?= $this->controlInputField ?> .dz-message').style.display = 'none';
                 <?php endif; ?>
             },
             url: '<?= $this->url ?>',
