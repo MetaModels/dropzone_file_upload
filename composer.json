@@ -1,6 +1,8 @@
 {
   "name": "metamodels/dropzone_file_upload",
   "description": "MetaModels dropzone for the attribute file",
+  "license": "LGPL-3.0-or-later",
+  "type": "contao-bundle",
   "keywords": [
     "contao",
     "metamodels",
@@ -9,9 +11,6 @@
     "dropzone",
     "upload"
   ],
-  "type": "contao-bundle",
-  "homepage": "https://now.metamodel.me/",
-  "license": "LGPL-3.0-or-later",
   "authors": [
     {
       "name": "Christian Schiffler",
@@ -25,6 +24,7 @@
       "role": "Developer"
     }
   ],
+  "homepage": "https://now.metamodel.me/",
   "support": {
     "email": "mail@metamodel.me",
     "issues": "https://github.com/MetaModels/dropzone_file_upload/issues",
@@ -33,15 +33,15 @@
     "source": "https://github.com/MetaModels/dropzone_file_upload"
   },
   "require": {
-    "php": "^7.4 || ^8.0",
-    "ext-pdo": "*",
+    "php": "^8.1",
     "ext-json": "*",
-    "contao-community-alliance/dc-general": "^2.3@dev",
+    "ext-pdo": "*",
+    "contao-community-alliance/dc-general": "^2.3",
     "contao-community-alliance/meta-palettes": "^2.0",
     "contao-components/dropzone": "^5.0.1",
-    "contao/core-bundle": "^4.13.5, <5.0",
+    "contao/core-bundle": "^4.13.5 <5.0",
     "metamodels/attribute_file": "^2.3@dev",
-    "metamodels/core": "^2.3@dev",
+    "metamodels/core": "dev-feature/phpcq-2 as 2.3.0",
     "symfony/dependency-injection": "^5.4",
     "symfony/filesystem": "^5.4",
     "symfony/finder": "^5.4",
@@ -49,11 +49,17 @@
     "symfony/http-kernel": "^5.4"
   },
   "require-dev": {
-    "contao/manager-bundle": "^4.9.0, <4.13.0",
     "contao/manager-plugin": "^2.8",
-    "metamodels/contao-frontend-editing": "^2.2",
-    "phpcq/all-tasks": "^1.2"
+    "metamodels/contao-frontend-editing": "^2.3@dev",
+    "phpcq/runner-bootstrap": "^1.0@dev"
   },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.cyberspectrum.de/r"
+    }
+  ],
+  "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
       "MetaModels\\DropzoneFileUploadBundle\\": "src"
@@ -64,17 +70,18 @@
       "MetaModels\\DropzoneFileUploadBundle\\Test\\": "tests"
     }
   },
-  "extra": {
-    "contao-manager-plugin": "MetaModels\\DropzoneFileUploadBundle\\ContaoManager\\Plugin",
-    "branch-alias": {
-      "dev-feature/2.3.0": "2.3.x-dev"
-    }
-  },
   "config": {
     "allow-plugins": {
       "contao-components/installer": false,
-      "contao/manager-plugin": false
+      "contao/manager-plugin": false,
+      "php-http/discovery": true
     },
     "sort-packages": true
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-feature/2.3.0": "2.3.x-dev"
+    },
+    "contao-manager-plugin": "MetaModels\\DropzoneFileUploadBundle\\ContaoManager\\Plugin"
   }
 }
