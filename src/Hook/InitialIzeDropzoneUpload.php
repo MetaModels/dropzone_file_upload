@@ -162,9 +162,10 @@ final class InitialIzeDropzoneUpload
         $dropZone->dropzoneLabel = $widget->dropzoneLabel;
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $dropZone->dictMaxFilesExceeded =
-            \sprintf(
-                $this->translator->trans('ERR.maxFileUpload', [], 'contao_default'),
-                $this->getUploadLimit($widget)
+            $this->translator->trans(
+                'maxFileUpload',
+                ['%limit%' => $this->getUploadLimit($widget)],
+                'metamodels_default'
             );
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $dropZone->acceptedFiles = $this->getAllowedUploadTypes($widget);

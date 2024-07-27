@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" datatype="plaintext" original="src/CoreBundle/Resources/translations/tl_metamodel_dcasetting.en.xlf">
+    <body>
+      <trans-unit id="dropzone_settings_legend" resname="dropzone_settings_legend">
+        <source>Dropzone settings</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone.label" resname="fe_widget_file_dropzone.label">
+        <source>Dropzone</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone.description" resname="fe_widget_file_dropzone.description">
+        <source>If this option dropzone is active, then that widget has a draggable dropzone field.</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_removable.label" resname="fe_widget_file_dropzone_removable.label">
+        <source>Removable</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_removable.description" resname="fe_widget_file_dropzone_removable.description">
+        <source>If this option removable is active, then dropped files can be removed from the dropzone.</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_label.label" resname="fe_widget_file_dropzone_label.label">
+        <source>Dropzone label</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_label.description" resname="fe_widget_file_dropzone_label.description">
+        <source>Here you can enter the label text for the dropzone field. This label display in the dropzone field.</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_hide_label.label" resname="fe_widget_file_dropzone_hide_label.label">
+        <source>Hide label after file drop</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_hide_label.description" resname="fe_widget_file_dropzone_hide_label.description">
+        <source>If this option hide label is active, then the label hide if a file dropped.</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_limit.label" resname="fe_widget_file_dropzone_limit.label">
+        <source>Dropzone limit</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_limit.description" resname="fe_widget_file_dropzone_limit.description">
+        <source>Here can set the limit of uploads with the dropzone. If not defined, so can unlimited uploads.</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_description.label" resname="fe_widget_file_dropzone_description.label">
+        <source>Dropzone description</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_description.description" resname="fe_widget_file_dropzone_description.description">
+        <source>Here can you enter the dropzone description. This append the description for the field.</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_template.label" resname="fe_widget_file_dropzone_template.label">
+        <source>Custom template to use for dropzone</source>
+      </trans-unit>
+      <trans-unit id="fe_widget_file_dropzone_template.description" resname="fe_widget_file_dropzone_template.description">
+        <source>Select the template that shall be used for the dropzone. Valid template files start with "mm_form_field_dropzone".</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
