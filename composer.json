@@ -41,7 +41,7 @@
     "contao-components/dropzone": "^5.0.1",
     "contao/core-bundle": "^4.13.5 <5.0",
     "metamodels/attribute_file": "^2.3@dev",
-    "metamodels/core": "dev-feature/phpcq-2 as 2.3.0",
+    "metamodels/core": "^2.3@dev",
     "symfony/dependency-injection": "^5.4",
     "symfony/filesystem": "^5.4",
     "symfony/finder": "^5.4",
@@ -53,12 +53,6 @@
     "metamodels/contao-frontend-editing": "^2.3@dev",
     "phpcq/runner-bootstrap": "^1.0@dev"
   },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://packages.cyberspectrum.de/r"
-    }
-  ],
   "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
@@ -80,7 +74,8 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-feature/2.3.0": "2.3.x-dev"
+      "dev-feature/2.3.0": "2.3.x-dev",
+      "dev-hotfix/phpcq-2": "2.3.x-dev"
     },
     "contao-manager-plugin": "MetaModels\\DropzoneFileUploadBundle\\ContaoManager\\Plugin"
   }

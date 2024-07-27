@@ -56,35 +56,35 @@ final class InitialIzeDropzoneUpload
      *
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
 
     /**
      * The request stack.
      *
      * @var RequestStack
      */
-    private $requestStack;
+    private RequestStack $requestStack;
 
     /**
      * The finder.
      *
      * @var Finder
      */
-    private $finder;
+    private Finder $finder;
 
     /**
      * The filesystem.
      *
      * @var Filesystem
      */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     /**
      * The project directory.
      *
      * @var string
      */
-    private $projectDir;
+    private string $projectDir;
 
     /**
      * The constructor.
@@ -152,7 +152,7 @@ final class InitialIzeDropzoneUpload
          * @psalm-suppress UndefinedMagicPropertyFetch
          */
         $dropZone->uploadFolder = $widget->uploadFolder;
-        $dropZone->id           = (int) $widget->id;
+        $dropZone->id           = $widget->id;
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $dropZone->maxFiles = $this->getUploadLimit($widget);
         /**
