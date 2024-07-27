@@ -3,17 +3,17 @@
 /**
  * This file is part of MetaModels/dropzone_file_upload.
  *
- * (c) 2019 - 2020 The MetaModels team.
+ * (c) 2019-2024 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
  * This project is provided in good faith and hope to be usable by anyone.
  *
- * @package    MetaModels/attribute_file
+ * @package    MetaModels/dropzone_file_upload
  * @author     Sven Baumann <baumann.sv@gmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
- * @copyright  2019 - 2020 The MetaModels team.
+ * @copyright  2019-2024 The MetaModels team.
  * @license    https://github.com/MetaModels/dropzone_file_upload/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -45,7 +45,8 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
     unset($paletteProperties);
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone'] = [
-        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone'],
+        'label'       => 'fe_widget_file_dropzone.label',
+        'description' => 'fe_widget_file_dropzone.description',
         'exclude'   => true,
         'inputType' => 'checkbox',
         'eval'      => [
@@ -55,7 +56,8 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
     ];
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_limit'] = [
-        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_limit'],
+        'label'       => 'fe_widget_file_dropzone_limit.label',
+        'description' => 'fe_widget_file_dropzone_limit.description',
         'exclude'   => true,
         'inputType' => 'text',
         'eval'      => [
@@ -66,7 +68,8 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
     ];
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_label'] = [
-        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_label'],
+        'label'       => 'fe_widget_file_dropzone_label.label',
+        'description' => 'fe_widget_file_dropzone_label.description',
         'exclude'   => true,
         'inputType' => 'text',
         'eval'      => [
@@ -77,7 +80,8 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
     ];
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_hide_label'] = [
-        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_hide_label'],
+        'label'       => 'fe_widget_file_dropzone_hide_label.label',
+        'description' => 'fe_widget_file_dropzone_hide_label.description',
         'exclude'   => true,
         'inputType' => 'checkbox',
         'eval'      => [
@@ -87,7 +91,8 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
     ];
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_description'] = [
-        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_description'],
+        'label'       => 'fe_widget_file_dropzone_description.label',
+        'description' => 'fe_widget_file_dropzone_description.description',
         'exclude'   => true,
         'inputType' => 'text',
         'eval'      => [
@@ -98,7 +103,8 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
     ];
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_removable'] = [
-        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_removable'],
+        'label'       => 'fe_widget_file_dropzone_removable.label',
+        'description' => 'fe_widget_file_dropzone_removable.description',
         'exclude'   => true,
         'inputType' => 'checkbox',
         'eval'      => [
@@ -108,7 +114,8 @@ if (\in_array(MetaModelsContaoFrontendEditingBundle::class, System::getContainer
     ];
 
     $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['fields']['fe_widget_file_dropzone_template'] = [
-        'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_dcasetting']['fe_widget_file_dropzone_template'],
+        'label'       => 'fe_widget_file_dropzone_template.label',
+        'description' => 'fe_widget_file_dropzone_template.description',
         'exclude'   => true,
         'inputType' => 'select',
         'eval'      => [
