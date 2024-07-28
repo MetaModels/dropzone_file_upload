@@ -10,7 +10,7 @@
  *
  * This project is provided in good faith and hope to be usable by anyone.
  *
- * @package    MetaModels/attribute_file
+ * @package    MetaModels/dropzone_file_upload
  * @author     Sven Baumann <baumann.sv@gmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
  * @copyright  2019-2024 The MetaModels team.
@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace MetaModels\DropzoneFileUploadBundle\EventListener;
 
+use ContaoCommunityAlliance\DcGeneral\Contao\RequestScopeDeterminator;
 use ContaoCommunityAlliance\DcGeneral\Contao\RequestScopeDeterminatorAwareTrait;
 use ContaoCommunityAlliance\DcGeneral\Data\ModelId;
 use LogicException;
@@ -137,7 +138,7 @@ final class BuildDropzoneUploadListener
 
         $modelId = 'create';
         if ($request->query->has('id')) {
-            $modelId = ModelId::fromSerialized($request->query->get('id'))->getId();
+            $modelId = ModelId::fromSerialized((string) $request->query->get('id', ''))->getId();
         }
 
         $session = $request->getSession();
@@ -169,8 +170,11 @@ final class BuildDropzoneUploadListener
      */
     private function wantToHandle(BuildAttributeEvent $event): bool
     {
-        return $this->scopeDeterminator->currentScopeIsFrontend()
-               && !$this->scopeDeterminator->currentScopeIsUnknown()
+        $scopeDeterminator = $this->scopeDeterminator;
+        assert($scopeDeterminator instanceof RequestScopeDeterminator);
+
+        return $scopeDeterminator->currentScopeIsFrontend()
+               && !$scopeDeterminator->currentScopeIsUnknown()
                && $this->isDropzoneUploadField($event);
     }
 
@@ -186,7 +190,7 @@ final class BuildDropzoneUploadListener
         $properties = [];
         if (
             !(($attribute = $event->getAttribute()) instanceof File)
-            || !($inputScreen = $this->viewCombination->getScreen($event->getContainer()->getName()))
+            || null === ($inputScreen = $this->viewCombination->getScreen($event->getContainer()->getName()))
             || !(isset($inputScreen['properties']) && ($properties = $inputScreen['properties']))
         ) {
             return false;

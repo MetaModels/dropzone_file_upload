@@ -5,6 +5,12 @@
       <trans-unit id="maxFileUpload" resname="maxFileUpload">
         <source>The upload is limited of %limit% files.</source>
       </trans-unit>
+      <trans-unit id="dictCancelUpload" resname="dictCancelUpload">
+        <source>Cancel upload</source>
+      </trans-unit>
+      <trans-unit id="dictRemoveFile" resname="dictRemoveFile">
+        <source>Remove file</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

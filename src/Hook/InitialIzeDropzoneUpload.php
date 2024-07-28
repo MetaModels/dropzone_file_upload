@@ -152,7 +152,8 @@ final class InitialIzeDropzoneUpload
          * @psalm-suppress UndefinedMagicPropertyFetch
          */
         $dropZone->uploadFolder = $widget->uploadFolder;
-        $dropZone->id           = $widget->id;
+        /** @psalm-suppress InvalidPropertyAssignmentValue */
+        $dropZone->id = $widget->id;
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $dropZone->maxFiles = $this->getUploadLimit($widget);
         /**
@@ -168,6 +169,10 @@ final class InitialIzeDropzoneUpload
                 'metamodels_default'
             );
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $dropZone->dictCancelUpload = $this->translator->trans('dictCancelUpload', [], 'metamodels_default');
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $dropZone->dictRemoveFile = $this->translator->trans('dictRemoveFile', [], 'metamodels_default');
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $dropZone->acceptedFiles = $this->getAllowedUploadTypes($widget);
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $dropZone->uploadedFiles = $this->findUploadedFiles($widget);
@@ -182,7 +187,7 @@ final class InitialIzeDropzoneUpload
          */
         $dropZone->hideLabel = $widget->hideLabel;
 
-        return \substr($content, 0, \strrpos($content, '</div>')) . $dropZone->parse() . '</div>';
+        return \substr($content, 0, (int) \strrpos($content, '</div>')) . $dropZone->parse() . '</div>';
     }
 
     /**
@@ -282,7 +287,7 @@ final class InitialIzeDropzoneUpload
             return $notfound;
         }
 
-        $searchFilename = $this->requestStack->getMainRequest()->request->get('removeFile');
+        $searchFilename = $this->requestStack->getMainRequest()?->request?->get('removeFile');
         $foundFile      = null;
         /** @var SplFileInfo $file */
         foreach ($foundFiles as $file) {
@@ -435,7 +440,7 @@ final class InitialIzeDropzoneUpload
             $rootDir = System::getContainer()->getParameter('kernel.project_dir');
 
             $src             = System::getContainer()->get('contao.image.image_factory')
-                ->create($file->getRealPath(), [120, 120, ResizeConfiguration::MODE_CROP])
+                ?->create($file->getRealPath(), [120, 120, ResizeConfiguration::MODE_CROP])
                 ->getUrl($rootDir);
             $uploadedFiles[] = [
                 'mockFile' => [
