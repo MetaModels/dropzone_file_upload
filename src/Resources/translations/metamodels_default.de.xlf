@@ -1,0 +1,18 @@
+<?xml version="1.0" ?><xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" datatype="plaintext" original="src/CoreBundle/Resources/translations/metamodels_default.en.xlf" target-language="de">
+    <body>
+      <trans-unit id="maxFileUpload" resname="maxFileUpload">
+        <source>The upload is limited of %limit% files.</source>
+        <target>Der Upload ist auf %limit% Datei(en) beschränkt.</target>
+      </trans-unit>
+      <trans-unit id="dictCancelUpload" resname="dictCancelUpload">
+        <source>Cancel upload</source>
+        <target>Upload abbrechen</target>
+      </trans-unit>
+      <trans-unit id="dictRemoveFile" resname="dictRemoveFile">
+        <source>Remove file</source>
+        <target>Datei entfernen</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -6,7 +6,7 @@
         <div class="dropzone-previews" id="<?= $this->dropzonePreviews ?>"></div>
     </div>
     <?php if ($this->uploadDescription): ?>
-    <p class="tl_help tl_tip" title=""><?= $this->uploadDescription ?></p>
+        <p class="tl_help tl_tip" title=""><?= $this->uploadDescription ?></p>
     <?php endif; ?>
 </div>
 
@@ -18,7 +18,9 @@
                 document.getElementById('<?= 'ctrl_' . $this->controlInputField ?>').style.display = 'none';
 
                 <?php if ($this->addRemoveLinks): ?>
-                    this.options.addRemoveLinks = true;
+                    this.options.addRemoveLinks   = true;
+                    this.options.dictCancelUpload = '<?= $this->dictCancelUpload ?>';
+                    this.options.dictRemoveFile   = '<?= $this->dictRemoveFile ?>';
                 <?php endif; ?>
 
                 <?php foreach ($this->uploadedFiles as $uploadedFile): ?>
@@ -58,9 +60,13 @@
         });
 
         dropzone.on('success', function (file, response, progressEvent) {
-            var message = document.createElement('div');
-            message.innerHTML = response.message;
-            file.previewTemplate.appendChild(message);
+            if (undefined !== response.message) {
+                var message = document.createElement('div');
+                message.classList.add('dz-preview-message');
+                message.style.maxWidth = '120px';
+                message.innerHTML = response.message;
+                file.previewTemplate.appendChild(message);
+            }
 
             if (response.status === 409) {
                 var errorMessage = response.message;

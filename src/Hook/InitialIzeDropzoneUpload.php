@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/dropzone_file_upload.
  *
- * (c) 2019-2023 The MetaModels team.
+ * (c) 2019-2024 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,7 +13,7 @@
  * @package    MetaModels/attribute_file
  * @author     Sven Baumann <baumann.sv@gmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
- * @copyright  2019-2023 The MetaModels team.
+ * @copyright  2019-2024 The MetaModels team.
  * @license    https://github.com/MetaModels/dropzone_file_upload/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace MetaModels\DropzoneFileUploadBundle\Hook;
 
+use Contao\System;
 use ContaoCommunityAlliance\DcGeneral\ContaoFrontend\Widgets\UploadOnSteroids;
 use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
 use Contao\Config;
@@ -45,6 +46,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * This initializes the dropzone upload field.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 final class InitialIzeDropzoneUpload
 {
@@ -53,35 +56,35 @@ final class InitialIzeDropzoneUpload
      *
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
 
     /**
      * The request stack.
      *
      * @var RequestStack
      */
-    private $requestStack;
+    private RequestStack $requestStack;
 
     /**
      * The finder.
      *
      * @var Finder
      */
-    private $finder;
+    private Finder $finder;
 
     /**
      * The filesystem.
      *
      * @var Filesystem
      */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     /**
      * The project directory.
      *
      * @var string
      */
-    private $projectDir;
+    private string $projectDir;
 
     /**
      * The constructor.
@@ -124,28 +127,67 @@ final class InitialIzeDropzoneUpload
 
         $this->includeDropZoneAssets();
 
-        $dropZone                       = new FrontendTemplate($widget->dropzoneTemplate);
-        $dropZone->requestToken         = RequestToken::get();
-        $dropZone->url                  = Environment::get('requestUri');
-        $dropZone->removeUrl            = Environment::get('requestUri');
-        $dropZone->uploadDescription    = $widget->dropzoneDescription ?: '';
-        $dropZone->controlInputField    = $widget->id;
-        $dropZone->dropzonePreviews     = 'dropzone_previews_' . $widget->id;
-        $dropZone->uploadFolder         = $widget->uploadFolder;
-        $dropZone->id                   = $widget->id;
-        $dropZone->maxFiles             = $this->getUploadLimit($widget);
-        $dropZone->dropzoneLabel        = $widget->dropzoneLabel;
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
+        $dropZone = new FrontendTemplate($widget->dropzoneTemplate);
+        /**
+         * @psalm-suppress UndefinedMagicPropertyAssignment
+         * @psalm-suppress DeprecatedClass
+         */
+        $dropZone->requestToken = RequestToken::get();
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $dropZone->url = Environment::get('requestUri');
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $dropZone->removeUrl = Environment::get('requestUri');
+        /**
+         * @psalm-suppress UndefinedMagicPropertyAssignment
+         * @psalm-suppress UndefinedMagicPropertyFetch
+         */
+        $dropZone->uploadDescription = $widget->dropzoneDescription ?: '';
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $dropZone->controlInputField = $widget->id;
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $dropZone->dropzonePreviews = 'dropzone_previews_' . $widget->id;
+        /**
+         * @psalm-suppress UndefinedMagicPropertyAssignment
+         * @psalm-suppress UndefinedMagicPropertyFetch
+         */
+        $dropZone->uploadFolder = $widget->uploadFolder;
+        /** @psalm-suppress InvalidPropertyAssignmentValue */
+        $dropZone->id = $widget->id;
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $dropZone->maxFiles = $this->getUploadLimit($widget);
+        /**
+         * @psalm-suppress UndefinedMagicPropertyAssignment
+         * @psalm-suppress UndefinedMagicPropertyFetch
+         */
+        $dropZone->dropzoneLabel = $widget->dropzoneLabel;
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $dropZone->dictMaxFilesExceeded =
-            \sprintf(
-                $this->translator->trans('ERR.maxFileUpload', [], 'contao_default'),
-                $this->getUploadLimit($widget)
+            $this->translator->trans(
+                'maxFileUpload',
+                ['%limit%' => $this->getUploadLimit($widget)],
+                'metamodels_default'
             );
-        $dropZone->acceptedFiles        = $this->getAllowedUploadTypes($widget);
-        $dropZone->uploadedFiles        = $this->findUploadedFiles($widget);
-        $dropZone->addRemoveLinks       = $widget->addRemoveLinks;
-        $dropZone->hideLabel            = $widget->hideLabel;
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $dropZone->dictCancelUpload = $this->translator->trans('dictCancelUpload', [], 'metamodels_default');
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $dropZone->dictRemoveFile = $this->translator->trans('dictRemoveFile', [], 'metamodels_default');
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $dropZone->acceptedFiles = $this->getAllowedUploadTypes($widget);
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $dropZone->uploadedFiles = $this->findUploadedFiles($widget);
+        /**
+         * @psalm-suppress UndefinedMagicPropertyAssignment
+         * @psalm-suppress UndefinedMagicPropertyFetch
+         */
+        $dropZone->addRemoveLinks = $widget->addRemoveLinks;
+        /**
+         * @psalm-suppress UndefinedMagicPropertyAssignment
+         * @psalm-suppress UndefinedMagicPropertyFetch
+         */
+        $dropZone->hideLabel = $widget->hideLabel;
 
-        return \substr($content, 0, \strrpos($content, '</div>')) . $dropZone->parse() . '</div>';
+        return \substr($content, 0, (int) \strrpos($content, '</div>')) . $dropZone->parse() . '</div>';
     }
 
     /**
@@ -159,9 +201,11 @@ final class InitialIzeDropzoneUpload
      */
     private function handleAjaxRequest(Widget $widget): void
     {
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
 
-        if (('dropZoneAjax' !== $request->request->get('action'))
+        if (
+            null === $request
+            || ('dropZoneAjax' !== $request->request->get('action'))
             || ($widget->id !== $request->request->get('id'))
         ) {
             return;
@@ -187,17 +231,23 @@ final class InitialIzeDropzoneUpload
      */
     private function doUploadLoadFile(Widget $widget): array
     {
+        /**
+         * @psalm-suppress UndefinedMagicPropertyAssignment
+         * @psalm-suppress UndefinedMagicPropertyFetch
+         */
         $widget->extensions = $widget->extensions ?: Config::get('uploadTypes');
 
-        $this->parseGlobalUploadFiles($widget->name);
+        $this->parseGlobalUploadFiles($widget);
 
         $uploadTypes = Config::get('uploadTypes');
         Config::set('uploadTypes', $widget->extensions);
 
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         new Folder($widget->tempFolder);
 
         $upload = new FileUpload();
         $upload->setName($widget->name);
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         $uploads = $upload->uploadTo($widget->tempFolder);
 
         Config::set('uploadTypes', $uploadTypes);
@@ -225,6 +275,7 @@ final class InitialIzeDropzoneUpload
     {
         $notfound = ['message' => 'The file is not found in the temporary folder.', 'status' => 409];
 
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         $tempFolder = $this->projectDir . DIRECTORY_SEPARATOR . $widget->tempFolder;
         try {
             $foundFiles = $this->finder->files()->in($tempFolder);
@@ -236,7 +287,7 @@ final class InitialIzeDropzoneUpload
             return $notfound;
         }
 
-        $searchFilename = $this->requestStack->getMasterRequest()->request->get('removeFile');
+        $searchFilename = $this->requestStack->getMainRequest()?->request?->get('removeFile');
         $foundFile      = null;
         /** @var SplFileInfo $file */
         foreach ($foundFiles as $file) {
@@ -269,21 +320,14 @@ final class InitialIzeDropzoneUpload
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    private function parseGlobalUploadFiles(string $propertyName): void
+    private function parseGlobalUploadFiles(Widget $widget): void
     {
-        $files = [];
-
-        foreach ($_FILES['file'] as $param => $value) {
-            if (!is_array($param)) {
-                $files[$param][] = $value;
-
-                continue;
-            }
-
-            $files[$param] = $value;
-        }
-
-        $_FILES[$propertyName] = $files;
+        $_FILES[$widget->name] = \array_map(
+            '1' !== $this->getUploadLimit($widget)
+            ? static fn(string|int $value): array => [$value]
+            : static fn(string|int $value): string|int => $value,
+            $_FILES['file']
+        );
     }
 
     /**
@@ -311,10 +355,12 @@ final class InitialIzeDropzoneUpload
      */
     private function getUploadLimit(Widget $widget): string
     {
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         if (!$widget->multiple) {
             return '1';
         }
 
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         return (string) $widget->uploadLimit ?: 'null';
     }
 
@@ -327,6 +373,7 @@ final class InitialIzeDropzoneUpload
      */
     private function getAllowedUploadTypes(Widget $widget): string
     {
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         $allowedExtensions = $widget->extensions ?: Config::get('uploadTypes');
 
         $extensions = [];
@@ -348,6 +395,7 @@ final class InitialIzeDropzoneUpload
     {
         $uploadedFiles = [];
 
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         $tempFolder = $this->projectDir . DIRECTORY_SEPARATOR . $widget->tempFolder;
         try {
             $foundFiles = $this->finder->files()->in($tempFolder);
@@ -367,7 +415,9 @@ final class InitialIzeDropzoneUpload
                 continue;
             }
 
-            $type = $mimeTypeGuesser->guessMimeType($file->getRealPath());
+            if (null === $type = $mimeTypeGuesser->guessMimeType($file->getRealPath())) {
+                continue;
+            }
 
             if (false === \stripos($type, 'image')) {
                 $uploadedFiles[] = [
@@ -380,9 +430,11 @@ final class InitialIzeDropzoneUpload
                 continue;
             }
 
-            $src             = \System::getContainer()->get('contao.image.image_factory')
-                ->create($file->getRealPath(), [120, 120, ResizeConfiguration::MODE_CROP])
-                ->getUrl(TL_ROOT);
+            $rootDir = System::getContainer()->getParameter('kernel.project_dir');
+
+            $src             = System::getContainer()->get('contao.image.image_factory')
+                ?->create($file->getRealPath(), [120, 120, ResizeConfiguration::MODE_CROP])
+                ->getUrl($rootDir);
             $uploadedFiles[] = [
                 'mockFile' => [
                     'name' => $file->getFilename(),
@@ -405,6 +457,7 @@ final class InitialIzeDropzoneUpload
      */
     private function isDropzoneUpload(Widget $widget): bool
     {
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         return $this->isMetaModelDataDefinition($widget)
                && ($widget instanceof UploadOnSteroids)
                && $widget->dropzoneUpload

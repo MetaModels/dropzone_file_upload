@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_file.
  *
- * (c) 2019-2022 The MetaModels team.
+ * (c) 2019-2024 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,7 +12,8 @@
  *
  * @package    MetaModels/attribute_file
  * @author     Sven Baumann <baumann.sv@gmail.com>
- * @copyright  2019-2022 The MetaModels team.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2019-2024 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_file/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -35,12 +36,15 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+
 use function self;
 
 /**
  * The test case for test the extension.
  *
  * @covers \MetaModels\DropzoneFileUploadBundle\DependencyInjection\MetaModelsDropzoneFileUploadExtension
+ *
+ * @SuppressWarnings(PHPMD.LongClassName)
  */
 final class MetaModelsDropzoneFileUploadExtensionTest extends TestCase
 {
@@ -64,7 +68,7 @@ final class MetaModelsDropzoneFileUploadExtensionTest extends TestCase
      */
     public function testFrontenEditingRegistersServices(): void
     {
-        $container = $this->getMockBuilder(ContainerBuilder::class)->getMock();
+        $container = $this->getMockBuilder(ContainerBuilder::class)->disableOriginalConstructor()->getMock();
         $container
             ->method('getParameter')
             ->with('kernel.bundles')
@@ -164,7 +168,7 @@ final class MetaModelsDropzoneFileUploadExtensionTest extends TestCase
      */
     public function testWithoutFrontendEditing(): void
     {
-        $container = $this->getMockBuilder(ContainerBuilder::class)->getMock();
+        $container = $this->getMockBuilder(ContainerBuilder::class)->disableOriginalConstructor()->getMock();
         $container
             ->method('getParameter')
             ->with('kernel.bundles')

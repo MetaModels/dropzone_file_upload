@@ -3,17 +3,17 @@
 /**
  * This file is part of MetaModels/dropzone_file_upload.
  *
- * (c) 2019 - 2022 The MetaModels team.
+ * (c) 2019-2024 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
  * This project is provided in good faith and hope to be usable by anyone.
  *
- * @package    MetaModels/attribute_file
+ * @package    MetaModels/dropzone_file_upload
  * @author     Sven Baumann <baumann.sv@gmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
- * @copyright  2019 - 2022 The MetaModels team.
+ * @copyright  2019-2024 The MetaModels team.
  * @license    https://github.com/MetaModels/dropzone_file_upload/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace MetaModels\DropzoneFileUploadBundle\EventListener;
 
+use ContaoCommunityAlliance\DcGeneral\Contao\RequestScopeDeterminator;
 use ContaoCommunityAlliance\DcGeneral\Contao\RequestScopeDeterminatorAwareTrait;
 use ContaoCommunityAlliance\DcGeneral\Data\ModelId;
 use LogicException;
@@ -58,7 +59,7 @@ final class BuildDropzoneUploadListener
      *
      * @var array
      */
-    private array $information;
+    private array $information = [];
 
     /**
      * The constructor.
@@ -130,21 +131,17 @@ final class BuildDropzoneUploadListener
      */
     private function getTempFolderPath(BuildAttributeEvent $event): string
     {
-        $request = $this->request->getMasterRequest();
+        $request = $this->request->getMainRequest();
         if (null === $request) {
             throw new LogicException('No request set on the stack');
         }
 
         $modelId = 'create';
         if ($request->query->has('id')) {
-            $modelId = ModelId::fromSerialized($request->query->get('id'))->getId();
+            $modelId = ModelId::fromSerialized((string) $request->query->get('id', ''))->getId();
         }
 
         $session = $request->getSession();
-        // NOTE: this check can be removed when depending on symfony/http-foundation 5.0+
-        if (null === $session) {
-            throw new LogicException('No session set on the request');
-        }
 
         if (null === ($randomPath = $session->get(self::SESSION_KEY_UPLOAD_PATH))) {
             $randomPath = \md5($session->getId());
@@ -173,8 +170,11 @@ final class BuildDropzoneUploadListener
      */
     private function wantToHandle(BuildAttributeEvent $event): bool
     {
-        return $this->scopeDeterminator->currentScopeIsFrontend()
-               && !$this->scopeDeterminator->currentScopeIsUnknown()
+        $scopeDeterminator = $this->scopeDeterminator;
+        assert($scopeDeterminator instanceof RequestScopeDeterminator);
+
+        return $scopeDeterminator->currentScopeIsFrontend()
+               && !$scopeDeterminator->currentScopeIsUnknown()
                && $this->isDropzoneUploadField($event);
     }
 
@@ -188,8 +188,9 @@ final class BuildDropzoneUploadListener
     private function isDropzoneUploadField(BuildAttributeEvent $event): bool
     {
         $properties = [];
-        if (!(($attribute = $event->getAttribute()) instanceof File)
-            || !($inputScreen = $this->viewCombination->getScreen($event->getContainer()->getName()))
+        if (
+            !(($attribute = $event->getAttribute()) instanceof File)
+            || null === ($inputScreen = $this->viewCombination->getScreen($event->getContainer()->getName()))
             || !(isset($inputScreen['properties']) && ($properties = $inputScreen['properties']))
         ) {
             return false;
@@ -201,8 +202,11 @@ final class BuildDropzoneUploadListener
             'fe_multiple_upload',
             'fe_multiple_upload_preview'
         ];
-        $information    = $properties[\array_flip(\array_column($properties, 'attr_id'))[$attribute->get('id')]];
-        if (!isset($information['file_widgetMode'])
+
+        /** @psalm-suppress NoValue - Sadly no array shape annotated in inputscreen array. */
+        $information = $properties[\array_flip(\array_column($properties, 'attr_id'))[$attribute->get('id')]];
+        if (
+            !isset($information['file_widgetMode'])
             || !\in_array($information['file_widgetMode'], $supportedModes, true)
         ) {
             return false;
