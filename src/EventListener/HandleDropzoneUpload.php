@@ -181,7 +181,10 @@ final class HandleDropzoneUpload
         $uploadFolder     = $this->getUploadedFolder($event);
         $uploadedFilePath = \current($uploaded);
         $file             = new File($uploadedFilePath);
-        /** @psalm-suppress UndefinedMagicPropertyFetch */
+        /**
+         * @psalm-suppress UndefinedMagicPropertyFetch
+         * @psalm-suppress RedundantCastGivenDocblockType
+         */
         $newFilePath =
             $this->moveFileToDestination($file, $uploadFolder, (bool) $widget->doNotOverwrite, $widget);
 
@@ -189,7 +192,7 @@ final class HandleDropzoneUpload
             $newUploadFolder = Dbafs::addResource($newFilePath);
         }
 
-        $widget->value = [$newUploadFolder->uuid];
+        $widget->value = $newUploadFolder->uuid;
     }
 
     /**
@@ -229,7 +232,10 @@ final class HandleDropzoneUpload
         /** @var SplFileInfo $fileInfo */
         foreach ($files as $fileInfo) {
             $file = new File($fileInfo->getPathname());
-            /** @psalm-suppress UndefinedMagicPropertyFetch */
+            /**
+             * @psalm-suppress UndefinedMagicPropertyFetch
+             * @psalm-suppress RedundantCastGivenDocblockType
+             */
             $newFilePath =
                 $this->moveFileToDestination($file, $uploadFolder, (bool) $widget->doNotOverwrite, $widget);
 
@@ -245,7 +251,8 @@ final class HandleDropzoneUpload
         }
 
         $model     = $event->getModel();
-        $values    = \array_map('\Contao\StringUtil::binToUuid', $model->getProperty($event->getProperty()->getName()));
+        $value     = $model->getProperty($event->getProperty()->getName()) ?? [];
+        $values    = \array_map('\Contao\StringUtil::binToUuid', $value);
         $setValues = \array_values(\array_unique(\array_merge($values, $uploaded)));
 
         $widget->value = \array_map('\Contao\StringUtil::uuidToBin', $setValues);
@@ -280,20 +287,18 @@ final class HandleDropzoneUpload
         $offset = 1;
 
         $fileInfo   = \pathinfo($filename);
+        $fileExt    = $fileInfo['extension'] ?? '';
         $allFiles   = Folder::scan($this->projectDir . DIRECTORY_SEPARATOR . $uploadFolder);
         $foundFiles = \preg_grep(
-            '/^' . \preg_quote($fileInfo['filename'] ?? '', '/') . '.*\.' . \preg_quote(
-                $fileInfo['extension'] ?? '',
-                '/'
-            ) . '/',
+            '/^' . \preg_quote($fileInfo['filename'] ?? '', '/') . '.*\.' . \preg_quote($fileExt, '/') . '/',
             $allFiles
         );
 
         foreach ($foundFiles as $foundFile) {
-            if (\preg_match('/__[0-9]+\.' . \preg_quote($fileInfo['extension'] ?? '', '/') . '$/', $foundFile)) {
-                $foundFile = \str_replace('.' . ($fileInfo['extension'] ?? ''), '', $foundFile);
+            if (1 === \preg_match('/__(?<index>[0-9]+)\.' . \preg_quote($fileExt, '/') . '$/', $foundFile, $match)) {
+                $foundFile = basename($foundFile, '.' . $fileExt);
 
-                $offset = \max($offset, (int) \substr($foundFile, (\strrpos($foundFile, '_') + 1)));
+                $offset = \max($offset, (int) $match['index']);
             }
         }
 
@@ -424,7 +429,10 @@ final class HandleDropzoneUpload
     {
         $widget = $event->getWidget();
 
-        /** @psalm-suppress UndefinedMagicPropertyFetch */
+        /**
+         * @psalm-suppress UndefinedMagicPropertyFetch
+         * @psalm-suppress PossiblyNullPropertyFetch
+         */
         return true === $widget->dropzoneUpload;
     }
 
@@ -451,7 +459,7 @@ final class HandleDropzoneUpload
      */
     protected function getSlugOptions(): array
     {
-        // FIXME: Make konfigurable.
+        // FIXME: Make configurable.
         return ['locale' => 'de', 'validChars' => '0-9a-z_-'];
     }
 }

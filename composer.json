@@ -29,7 +29,6 @@
     "email": "mail@metamodel.me",
     "issues": "https://github.com/MetaModels/dropzone_file_upload/issues",
     "wiki": "https://de.contaowiki.org/MetaModels",
-    "irc": "irc://irc.freenode.org/contao.mm",
     "source": "https://github.com/MetaModels/dropzone_file_upload"
   },
   "require": {
@@ -53,7 +52,6 @@
     "metamodels/contao-frontend-editing": "^2.3@dev",
     "phpcq/runner-bootstrap": "^1.0@dev"
   },
-  "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
       "MetaModels\\DropzoneFileUploadBundle\\": "src"
@@ -74,8 +72,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-feature/2.3.0": "2.3.x-dev",
-      "dev-hotfix/phpcq-2": "2.3.x-dev"
+      "dev-feature/2.3.0": "2.3.x-dev"
     },
     "contao-manager-plugin": "MetaModels\\DropzoneFileUploadBundle\\ContaoManager\\Plugin"
   }

@@ -68,7 +68,7 @@ final class MetaModelsDropzoneFileUploadExtensionTest extends TestCase
      */
     public function testFrontenEditingRegistersServices(): void
     {
-        $container = $this->getMockBuilder(ContainerBuilder::class)->getMock();
+        $container = $this->getMockBuilder(ContainerBuilder::class)->disableOriginalConstructor()->getMock();
         $container
             ->method('getParameter')
             ->with('kernel.bundles')
@@ -168,7 +168,7 @@ final class MetaModelsDropzoneFileUploadExtensionTest extends TestCase
      */
     public function testWithoutFrontendEditing(): void
     {
-        $container = $this->getMockBuilder(ContainerBuilder::class)->getMock();
+        $container = $this->getMockBuilder(ContainerBuilder::class)->disableOriginalConstructor()->getMock();
         $container
             ->method('getParameter')
             ->with('kernel.bundles')

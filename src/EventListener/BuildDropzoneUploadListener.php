@@ -202,7 +202,9 @@ final class BuildDropzoneUploadListener
             'fe_multiple_upload',
             'fe_multiple_upload_preview'
         ];
-        $information    = $properties[\array_flip(\array_column($properties, 'attr_id'))[$attribute->get('id')]];
+
+        /** @psalm-suppress NoValue - Sadly no array shape annotated in inputscreen array. */
+        $information = $properties[\array_flip(\array_column($properties, 'attr_id'))[$attribute->get('id')]];
         if (
             !isset($information['file_widgetMode'])
             || !\in_array($information['file_widgetMode'], $supportedModes, true)

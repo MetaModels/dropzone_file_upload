@@ -237,7 +237,7 @@ final class InitialIzeDropzoneUpload
          */
         $widget->extensions = $widget->extensions ?: Config::get('uploadTypes');
 
-        $this->parseGlobalUploadFiles($widget->name);
+        $this->parseGlobalUploadFiles($widget);
 
         $uploadTypes = Config::get('uploadTypes');
         Config::set('uploadTypes', $widget->extensions);
@@ -320,21 +320,14 @@ final class InitialIzeDropzoneUpload
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    private function parseGlobalUploadFiles(string $propertyName): void
+    private function parseGlobalUploadFiles(Widget $widget): void
     {
-        $files = [];
-
-        foreach ($_FILES['file'] as $param => $value) {
-            if (!\is_array($param)) {
-                $files[$param][] = $value;
-
-                continue;
-            }
-
-            $files[$param] = $value;
-        }
-
-        $_FILES[$propertyName] = $files;
+        $_FILES[$widget->name] = \array_map(
+            '1' !== $this->getUploadLimit($widget)
+            ? static fn(string|int $value): array => [$value]
+            : static fn(string|int $value): string|int => $value,
+            $_FILES['file']
+        );
     }
 
     /**
