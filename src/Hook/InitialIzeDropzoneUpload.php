@@ -432,7 +432,7 @@ final class InitialIzeDropzoneUpload
 
             $rootDir = System::getContainer()->getParameter('kernel.project_dir');
 
-            $src             = System::getContainer()->get('contao.image.image_factory')
+            $src             = System::getContainer()->get('contao.image.factory')
                 ?->create($file->getRealPath(), [120, 120, ResizeConfiguration::MODE_CROP])
                 ->getUrl($rootDir);
             $uploadedFiles[] = [
