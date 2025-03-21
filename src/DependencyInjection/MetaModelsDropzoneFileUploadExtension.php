@@ -39,10 +39,12 @@ class MetaModelsDropzoneFileUploadExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader  = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $bundles = $container->getParameter('kernel.bundles');
+        assert(\is_array($bundles));
 
         // Load configuration for the frontend editing.
-        if (\in_array(MetaModelsContaoFrontendEditingBundle::class, $container->getParameter('kernel.bundles'), true)) {
+        if (\in_array(MetaModelsContaoFrontendEditingBundle::class, $bundles, true)) {
             $loader->load('dc-general/table/tl_metamodel_dcasetting.yml');
             $loader->load('frontend_editing/services.yml');
             $loader->load('frontend_editing/event_listener.yml');

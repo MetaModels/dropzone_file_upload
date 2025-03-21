@@ -3,17 +3,17 @@
 /**
  * This file is part of MetaModels/dropzone_file_upload.
  *
- * (c) 2019 - 2022 The MetaModels team.
+ * (c) 2019-2024 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
  * This project is provided in good faith and hope to be usable by anyone.
  *
- * @package    MetaModels/attribute_file
+ * @package    MetaModels/dropzone_file_upload
  * @author     Sven Baumann <baumann.sv@gmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
- * @copyright  2019 - 2022 The MetaModels team.
+ * @copyright  2019-2024 The MetaModels team.
  * @license    https://github.com/MetaModels/dropzone_file_upload/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -25,21 +25,28 @@ namespace MetaModels\DropzoneFileUploadBundle\EventListener;
 use Contao\CoreBundle\Slug\Slug as SlugGenerator;
 use Contao\Dbafs;
 use Contao\FilesModel;
+use Contao\Folder;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Widget;
+use ContaoCommunityAlliance\DcGeneral\Contao\RequestScopeDeterminator;
 use ContaoCommunityAlliance\DcGeneral\Contao\RequestScopeDeterminatorAwareTrait;
 use ContaoCommunityAlliance\DcGeneral\ContaoFrontend\Event\BuildWidgetEvent;
 use ContaoCommunityAlliance\DcGeneral\ContaoFrontend\Widgets\UploadOnSteroids;
+use ContaoCommunityAlliance\DcGeneral\DataDefinition\ContainerInterface;
+use ContaoCommunityAlliance\DcGeneral\InputProviderInterface;
 use MetaModels\DcGeneral\DataDefinition\MetaModelDataDefinition;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * This handle the file/s, where with dropzone uploaded.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 final class HandleDropzoneUpload
 {
@@ -88,13 +95,14 @@ final class HandleDropzoneUpload
         SlugGenerator $slugGenerator = null
     ) {
         if (null === $slugGenerator) {
-            $slugGenerator = System::getContainer()->get('contao.slug');
             // @codingStandardsIgnoreStart
             @trigger_error(
                 'SlugGenerator $slugGenerator must be passed in the constructor. Fallback will be dropped.',
                 E_USER_DEPRECATED
             );
             // @codingStandardsIgnoreEnd
+            $slugGenerator = System::getContainer()->get('contao.slug');
+            assert($slugGenerator instanceof SlugGenerator);
         }
 
         $this->request       = $request;
@@ -141,9 +149,14 @@ final class HandleDropzoneUpload
      */
     private function handleSingleUpload(BuildWidgetEvent $event): void
     {
-        if ($event->getWidget()->multiple
-            || $event->getWidget()->hasErrors()
-            || !($tmpFolder = $this->getTempFolder($event))
+        $widget = $event->getWidget();
+        assert($widget instanceof UploadOnSteroids);
+
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
+        if (
+            $widget->multiple
+            || $widget->hasErrors()
+            || null === ($tmpFolder = $this->getTempFolder($event))
         ) {
             return;
         }
@@ -165,19 +178,21 @@ final class HandleDropzoneUpload
             $uploaded[] = $fileInfo->getPathname();
         }
 
-        $uploadFolder = $this->getUploadedFolder($event);
-        $widget       = $event->getWidget();
-
+        $uploadFolder     = $this->getUploadedFolder($event);
         $uploadedFilePath = \current($uploaded);
         $file             = new File($uploadedFilePath);
-        $newFilePath      =
+        /**
+         * @psalm-suppress UndefinedMagicPropertyFetch
+         * @psalm-suppress RedundantCastGivenDocblockType
+         */
+        $newFilePath =
             $this->moveFileToDestination($file, $uploadFolder, (bool) $widget->doNotOverwrite, $widget);
 
         if (!($newUploadFolder = FilesModel::findByPath($newFilePath))) {
             $newUploadFolder = Dbafs::addResource($newFilePath);
         }
 
-        $widget->value = [$newUploadFolder->uuid];
+        $widget->value = $newUploadFolder->uuid;
     }
 
     /**
@@ -189,9 +204,14 @@ final class HandleDropzoneUpload
      */
     private function handleMultipleUpload(BuildWidgetEvent $event): void
     {
-        if (!$event->getWidget()->multiple
-            || $event->getWidget()->hasErrors()
-            || !($tmpFolder = $this->getTempFolder($event))
+        $widget = $event->getWidget();
+        assert($widget instanceof UploadOnSteroids);
+
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
+        if (
+            !$widget->multiple
+            || $widget->hasErrors()
+            || null === ($tmpFolder = $this->getTempFolder($event))
         ) {
             return;
         }
@@ -208,12 +228,14 @@ final class HandleDropzoneUpload
         }
 
         $uploadFolder = $this->getUploadedFolder($event);
-        $widget       = $event->getWidget();
-
-        $uploaded = [];
+        $uploaded     = [];
         /** @var SplFileInfo $fileInfo */
         foreach ($files as $fileInfo) {
-            $file        = new File($fileInfo->getPathname());
+            $file = new File($fileInfo->getPathname());
+            /**
+             * @psalm-suppress UndefinedMagicPropertyFetch
+             * @psalm-suppress RedundantCastGivenDocblockType
+             */
             $newFilePath =
                 $this->moveFileToDestination($file, $uploadFolder, (bool) $widget->doNotOverwrite, $widget);
 
@@ -221,11 +243,16 @@ final class HandleDropzoneUpload
                 $newUploadFolder = Dbafs::addResource($newFilePath);
             }
 
-            $uploaded[] = StringUtil::binToUuid($newUploadFolder->uuid);
+            if (null === ($uuId = $newUploadFolder->uuid)) {
+                continue;
+            }
+
+            $uploaded[] = StringUtil::binToUuid($uuId);
         }
 
         $model     = $event->getModel();
-        $values    = \array_map('\Contao\StringUtil::binToUuid', $model->getProperty($event->getProperty()->getName()));
+        $value     = $model->getProperty($event->getProperty()->getName()) ?? [];
+        $values    = \array_map('\Contao\StringUtil::binToUuid', $value);
         $setValues = \array_values(\array_unique(\array_merge($values, $uploaded)));
 
         $widget->value = \array_map('\Contao\StringUtil::uuidToBin', $setValues);
@@ -243,8 +270,10 @@ final class HandleDropzoneUpload
      */
     private function moveFileToDestination(File $file, string $uploadFolder, bool $override, Widget $widget): string
     {
+        /** @var UploadOnSteroids $widget */
         $filename = $widget->parseFilename($file->getFilename());
-        if (!$override
+        if (
+            !$override
             || !\file_exists($this->projectDir . DIRECTORY_SEPARATOR . $uploadFolder . DIRECTORY_SEPARATOR . $filename)
         ) {
             $newFilePath = $uploadFolder . DIRECTORY_SEPARATOR . $filename;
@@ -258,21 +287,22 @@ final class HandleDropzoneUpload
         $offset = 1;
 
         $fileInfo   = \pathinfo($filename);
-        $allFiles   = \scan($this->projectDir . DIRECTORY_SEPARATOR . $uploadFolder);
+        $fileExt    = $fileInfo['extension'] ?? '';
+        $allFiles   = Folder::scan($this->projectDir . DIRECTORY_SEPARATOR . $uploadFolder);
         $foundFiles = \preg_grep(
-            '/^' . \preg_quote($fileInfo['filename'], '/') . '.*\.' . \preg_quote($fileInfo['extension'], '/') . '/',
+            '/^' . \preg_quote($fileInfo['filename'] ?? '', '/') . '.*\.' . \preg_quote($fileExt, '/') . '/',
             $allFiles
         );
 
         foreach ($foundFiles as $foundFile) {
-            if (\preg_match('/__[0-9]+\.' . \preg_quote($fileInfo['extension'], '/') . '$/', $foundFile)) {
-                $foundFile = \str_replace('.' . $fileInfo['extension'], '', $foundFile);
+            if (1 === \preg_match('/__(?<index>[0-9]+)\.' . \preg_quote($fileExt, '/') . '$/', $foundFile, $match)) {
+                $foundFile = basename($foundFile, '.' . $fileExt);
 
-                $offset = \max($offset, (int) \substr($foundFile, (\strrpos($foundFile, '_') + 1)));
+                $offset = \max($offset, (int) $match['index']);
             }
         }
 
-        $newFilename = $fileInfo['filename'] . '__' . (++$offset) . '.' . $fileInfo['extension'];
+        $newFilename = ($fileInfo['filename'] ?? '') . '__' . (++$offset) . '.' . ($fileInfo['extension'] ?? '');
         $newFilePath = $uploadFolder . DIRECTORY_SEPARATOR . $newFilename;
         if (!\file_exists($this->projectDir . DIRECTORY_SEPARATOR . $newFilePath)) {
             $this->filesystem
@@ -299,29 +329,40 @@ final class HandleDropzoneUpload
     private function getUploadedFolder(BuildWidgetEvent $event): string
     {
         $widget = $event->getWidget();
+        assert($widget instanceof UploadOnSteroids);
 
-        $uploadFolder = FilesModel::findByUuid($widget->uploadFolder);
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
+        $uploadFolderPath = FilesModel::findByUuid($widget->uploadFolder)->path ?? '';
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         if (!$widget->extendFolder) {
-            return $uploadFolder->path;
+            /** @psalm-suppress PossiblyNullPropertyFetch */
+            return $uploadFolderPath;
         }
 
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         if ($widget->normalizeExtendFolder) {
+            /**
+             * @psalm-suppress UndefinedMagicPropertyAssignment
+             * @psalm-suppress PossiblyNullPropertyFetch
+             * @psalm-suppress UndefinedMagicPropertyFetch
+             */
             $widget->extendFolder =
                 $this->slugGenerator->generate((string) $widget->extendFolder, $this->getSlugOptions());
         }
-        $uploadFolderPath = $uploadFolder->path . DIRECTORY_SEPARATOR . $widget->extendFolder;
+        /** @psalm-suppress PossiblyNullPropertyFetch */
+        $uploadFolderAbsPath = $uploadFolderPath . DIRECTORY_SEPARATOR . $widget->extendFolder;
 
         $newUploadFolder = null;
-        if (!$this->filesystem->exists($uploadFolderPath)) {
-            $this->filesystem->mkdir($uploadFolderPath);
-            $newUploadFolder = Dbafs::addResource($uploadFolderPath);
+        if (!$this->filesystem->exists($uploadFolderAbsPath)) {
+            $this->filesystem->mkdir($uploadFolderAbsPath);
+            $newUploadFolder = Dbafs::addResource($uploadFolderAbsPath);
         }
 
-        if (!$newUploadFolder) {
-            $newUploadFolder = FilesModel::findByPath($uploadFolderPath);
+        if (null === $newUploadFolder) {
+            $newUploadFolder = FilesModel::findByPath($uploadFolderAbsPath);
         }
 
-        return $newUploadFolder->path;
+        return $newUploadFolder?->path ?? '';
     }
 
     /**
@@ -348,8 +389,11 @@ final class HandleDropzoneUpload
      */
     private function wantToHandle(BuildWidgetEvent $event): bool
     {
-        return $this->scopeDeterminator->currentScopeIsFrontend()
-               && !$this->scopeDeterminator->currentScopeIsUnknown()
+        $scopeDeterminator = $this->scopeDeterminator;
+        assert($scopeDeterminator instanceof RequestScopeDeterminator);
+
+        return $scopeDeterminator->currentScopeIsFrontend()
+               && !$scopeDeterminator->currentScopeIsUnknown()
                && ($event->getEnvironment()->getDataDefinition() instanceof MetaModelDataDefinition)
                && $this->isFormSubmitted($event)
                && $this->isDropzoneUploadField($event)
@@ -365,11 +409,13 @@ final class HandleDropzoneUpload
      */
     private function isFormSubmitted(BuildWidgetEvent $event): bool
     {
-        $environment = $event->getEnvironment();
-        $submitted   = $this->request->getMasterRequest()->request;
+        $submitted = $this->request->getMainRequest()?->request;
+        assert($submitted instanceof InputBag);
+        $dataDefinition = $event->getEnvironment()->getDataDefinition();
+        assert($dataDefinition instanceof ContainerInterface);
 
         return $submitted->has('FORM_SUBMIT')
-               && ($environment->getDataDefinition()->getName() === $submitted->get('FORM_SUBMIT'));
+               && ($dataDefinition->getName() === $submitted->get('FORM_SUBMIT'));
     }
 
     /**
@@ -381,7 +427,13 @@ final class HandleDropzoneUpload
      */
     private function isDropzoneUploadField(BuildWidgetEvent $event): bool
     {
-        return true === $event->getWidget()->dropzoneUpload;
+        $widget = $event->getWidget();
+
+        /**
+         * @psalm-suppress UndefinedMagicPropertyFetch
+         * @psalm-suppress PossiblyNullPropertyFetch
+         */
+        return true === $widget->dropzoneUpload;
     }
 
     /**
@@ -394,6 +446,7 @@ final class HandleDropzoneUpload
     private function isAjaxRequest(BuildWidgetEvent $event): bool
     {
         $inputProvider = $event->getEnvironment()->getInputProvider();
+        assert($inputProvider instanceof InputProviderInterface);
 
         return ('dropZoneAjax' === $inputProvider->getValue('action'))
                && $inputProvider->hasValue('id');
@@ -406,6 +459,7 @@ final class HandleDropzoneUpload
      */
     protected function getSlugOptions(): array
     {
+        // FIXME: Make configurable.
         return ['locale' => 'de', 'validChars' => '0-9a-z_-'];
     }
 }
