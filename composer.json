@@ -39,8 +39,8 @@
     "contao-community-alliance/meta-palettes": "^2.0",
     "contao-components/dropzone": "^5.0.1",
     "contao/core-bundle": "^4.13.5 <5.0",
-    "metamodels/attribute_file": "^2.3@dev",
-    "metamodels/core": "^2.3@dev",
+    "metamodels/attribute_file": "^2.3",
+    "metamodels/core": "^2.3",
     "symfony/dependency-injection": "^5.4",
     "symfony/filesystem": "^5.4",
     "symfony/finder": "^5.4",
@@ -49,7 +49,7 @@
   },
   "require-dev": {
     "contao/manager-plugin": "^2.8",
-    "metamodels/contao-frontend-editing": "^2.3@dev",
+    "metamodels/contao-frontend-editing": "^2.3",
     "phpcq/runner-bootstrap": "^1.0@dev"
   },
   "autoload": {
